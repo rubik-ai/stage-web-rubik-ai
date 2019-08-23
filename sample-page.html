@@ -19,8 +19,8 @@
         }
 
         function getPromoCode() {
-          var plainEmail = document.getElementById('plainEmail').value;
-          var plainEmpCode = document.getElementById('plainEmpCode').value;
+          var plainEmail = document.getElementById('plainEmail').value.trim();
+          var plainEmpCode = document.getElementById('plainEmpCode').value.trim();
 
           var emailToken = toToken(plainEmail);
           var empCodeToken = toToken(plainEmpCode);
