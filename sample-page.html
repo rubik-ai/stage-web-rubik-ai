@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/forge/0.8.2/forge.all.min.js"></script>
+    <script type="text/Javascript">
+        function toToken(plainText) {
+          var md = forge.md.sha256.create();
+          md.start();
+          md.update(plainText, "utf8");
+          var hashText = md.digest().toHex();
+          return hashText;
+        }
+
+        function getPromoCode() {
+          var plainEmail = document.getElementById('plainEmail').value;
+          var plainEmpCode = document.getElementById('plainEmpCode').value;
+
+          var emailToken = toToken(plainEmail);
+          var empCodeToken = toToken(plainEmpCode);
+
+          var URL = "https://bremployee.azurewebsites.net/api/lookup?code=a150hcXv836Wt5bc0abQ32FwALv2Weo8Ge6kfClj38brLVUUKUXspg==";
+          var paylaod = {
+            "email": emailToken,
+            "empCode": empCodeToken
+          };
+
+          $("#payload").html(JSON.stringify(paylaod));
+
+          var result = $.ajax({
+                url: URL,
+                type: 'POST',
+                dataType: "json",
+                contentType: 'application/json',
+                crossDomain: true,
+                beforeSend: function(request) {
+                  request.setRequestHeader("cache-control", "no-cache");
+                },
+                data: JSON.stringify(paylaod),
+                success: function( data, textStatus, jQxhr ){
+                    $('#result').html(JSON.stringify(data));
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                  alert('An error occurred... Look at the console (F12 or Ctrl+Shift+I, Console tab) for more information!');
+
+                  $('#result').html('<p>status code: '+jqXHR.status+'<br/>errorThrown: ' + errorThrown + '<br/>jqXHR.responseText: '+jqXHR.responseText + '</p>');
+                  console.log('jqXHR:');
+                  console.log(jqXHR);
+                  console.log('textStatus:');
+                  console.log(textStatus);
+                  console.log('errorThrown:');
+                  console.log(errorThrown);
+                }
+          });
+        }
+    </script>
+</head>
+
+<body>
+
+    <h3>BR Quick Promo Example</h3>
+
+    <br><br>Email Address: <input id='plainEmail' type='text' />
+    <br><br>Employee Code: <input id='plainEmpCode' type='text' />
+    <br><br><button onclick="getPromoCode()">Get Promo Code</button>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>##### Payload ##### <div id='payload'></div>
+    <br>##### Result #####<div id="result"></div>
+</body>
+
+</html>
