@@ -32,6 +32,7 @@
           };
 
           $("#payload").html(JSON.stringify(paylaod));
+          $('#result').html("Fetching...");  
 
           var result = $.ajax({
                 url: URL,
