@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+
+<style>
+  /* #controls {
+    position: fixed;
+    left: 0px;
+    width: 100%;
+    top: 0px;
+    height: 10%;
+  } */
+
+  #chart {
+    position: fixed;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+  }
+
+  path.link {
+    fill: none;
+    stroke: #c5c5c5;
+    stroke-width: 1.0px;
+  }
+
+  circle {
+    fill: #e6e4e4;
+    stroke: #fff;
+    stroke-width: 1.5px;
+  }
+
+  .circle-source {
+    fill: rgb(183, 183, 233);
+  }
+
+  .circle-destination {
+    fill: rgb(231, 179, 179);
+  }
+
+  .circle-node {
+    fill: #e6e4e4;
+  }
+
+  text {
+    fill: #000000;
+    font-size: 12px;
+    font-weight: lighter;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .ingoing {
+    stroke: #237690 !important;
+    letter-spacing: 2px;
+    font-weight: 100 !important;
+    font-size: 12px;
+  }
+
+  .ingoing-text {
+    color: #237690 !important;
+    letter-spacing: 2px;
+    font-weight: 100 !important;
+    font-size: 12px;
+    stroke-width: 1px !important;
+  }
+
+  .outgoing {
+    stroke: #FA1209 !important;
+    letter-spacing: 2px;
+    font-size: 12px;
+    font-weight: lighter;
+  }
+
+  .outgoing-text {
+    color: #FA1209 !important;
+    letter-spacing: 2px;
+    font-weight: 100 !important;
+    font-size: 12px;
+    stroke-width: 1px !important;
+  }
+
+  .selected {
+    stroke: #000000 !important;
+    letter-spacing: 2px;
+    font-weight: lighter;
+    font-size: 12px;
+  }
+
+  .selected-text {
+    color: #000000;
+    letter-spacing: 2px;
+    stroke-width: 1px !important;
+  }
+
+  /* .float-right {
+    float: right;
+    margin-right: 10px;
+  }
+ */
+  .tooltip {
+    position: absolute;
+    width: 100px;
+    height: 50px;
+    fill: #FFF !important;
+    stroke: rgba(0, 0, 0, .03) !important;
+    color: #FA1209 !important;
+  }
+
+  .card {
+    border: 1px solid rgba(14, 14, 14, 0.03);
+    position: fixed;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, .24), 0 0 2px rgba(0, 0, 0, .12);
+    bottom: 10px;
+    right: 16px;
+    width: 110px;
+    height: 50px;
+    padding: 10px 5px 10px 10px;
+    background: #fff;
+  }
+
+  .container {
+    top: 50%;
+    position: absolute;
+    transform: translateY(-50%);
+  }
+
+  line {
+    stroke: #e6e4e4;
+    stroke-width: 2
+  }
+</style>
+
+<body>
+  <div id="chart"></div>
+  <div class="card">
+    <div class="container">
+      <strong>Size:</strong>
+      <select id="selection-data">
+        <option value="volumeRatio" id="volume">Volume</option>
+        <option value="qualityRatio" id="quality">Quality</option>
+        <option value="impactRatio" id='impact'>Impact</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- <div id="controls">
+    <button class="float-right" id="zoom_out"> -</button>
+    <button class="float-right" id="zoom_in">+</button>
+  </div> -->
+
+  <script>
+    graph = { "nodes": [{ "id": 0, "name": "source_1", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "connect", "level": 0 }, { "id": 1, "name": "source_2", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "connect", "level": 0 }, { "id": 2, "name": "source_3", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "connect", "level": 0 }, { "id": 3, "name": "dataset_3", "volumeRatio": 0.3, "impactRatio": 0.1, "qualityRatio": 0.6, "similarDatasets": [8, 25, 16, 30, 0], "type": "process", "level": 2 }, { "id": 4, "name": "dataset_4", "volumeRatio": 0.4, "impactRatio": 0.2, "qualityRatio": 0.2, "similarDatasets": [20, 30, 22, 6, 21], "type": "process", "level": 2 }, { "id": 5, "name": "dataset_5", "volumeRatio": 0.1, "impactRatio": 0.8, "qualityRatio": 0.5, "similarDatasets": [15, 17, 26, 13, 27], "type": "process", "level": 3 }, { "id": 6, "name": "dataset_6", "volumeRatio": 0.3, "impactRatio": 0.4, "qualityRatio": 0.4, "similarDatasets": [2, 8, 13, 30, 14], "type": "process", "level": 2 }, { "id": 7, "name": "dataset_7", "volumeRatio": 0.4, "impactRatio": 0.4, "qualityRatio": 0.1, "similarDatasets": [17, 19, 1, 11, 14], "type": "process", "level": 2 }, { "id": 8, "name": "dataset_8", "volumeRatio": 0.9, "impactRatio": 0.2, "qualityRatio": 0.5, "similarDatasets": [9, 13, 12, 2, 17], "type": "process", "level": 2 }, { "id": 9, "name": "dataset_9", "volumeRatio": 0.7, "impactRatio": 0.8, "qualityRatio": 0.9, "similarDatasets": [19, 26, 17, 29, 11], "type": "process", "level": 2 }, { "id": 10, "name": "dataset_10", "volumeRatio": 0.5, "impactRatio": 0.9, "qualityRatio": 0.4, "similarDatasets": [1, 17, 27, 18, 28], "type": "process", "level": 2 }, { "id": 11, "name": "dataset_11", "volumeRatio": 0.9, "impactRatio": 0.9, "qualityRatio": 0.5, "similarDatasets": [9, 8, 10, 1, 26], "type": "process", "level": 2 }, { "id": 12, "name": "dataset_12", "volumeRatio": 0.9, "impactRatio": 0.2, "qualityRatio": 0.5, "similarDatasets": [0, 21, 10, 7, 22], "type": "process", "level": 1 }, { "id": 13, "name": "dataset_13", "volumeRatio": 0.8, "impactRatio": 0.6, "qualityRatio": 0.7, "similarDatasets": [25, 2, 20, 7, 12], "type": "process", "level": 1 }, { "id": 14, "name": "dataset_14", "volumeRatio": 0.1, "impactRatio": 0.2, "qualityRatio": 0.1, "similarDatasets": [3, 13, 15, 27, 22], "type": "process", "level": 2 }, { "id": 15, "name": "dataset_15", "volumeRatio": 0.1, "impactRatio": 0.9, "qualityRatio": 0.5, "similarDatasets": [1, 13, 10, 11, 24], "type": "process", "level": 2 }, { "id": 16, "name": "dataset_16", "volumeRatio": 0.9, "impactRatio": 0.9, "qualityRatio": 0.7, "similarDatasets": [18, 5, 19, 6, 21], "type": "process", "level": 2 }, { "id": 17, "name": "dataset_17", "volumeRatio": 0.6, "impactRatio": 0.5, "qualityRatio": 0.7, "similarDatasets": [18, 0, 24, 10, 7], "type": "process", "level": 2 }, { "id": 18, "name": "dataset_18", "volumeRatio": 0.2, "impactRatio": 0.3, "qualityRatio": 0.3, "similarDatasets": [17, 11, 5, 1, 9], "type": "process", "level": 2 }, { "id": 19, "name": "dataset_19", "volumeRatio": 0.3, "impactRatio": 0.1, "qualityRatio": 0.4, "similarDatasets": [0, 24, 4, 21, 22], "type": "process", "level": 1 }, { "id": 20, "name": "dataset_20", "volumeRatio": 0.2, "impactRatio": 0.8, "qualityRatio": 0.5, "similarDatasets": [15, 18, 17, 6, 4], "type": "process", "level": 2 }, { "id": 21, "name": "dataset_21", "volumeRatio": 1, "impactRatio": 0.3, "qualityRatio": 1, "similarDatasets": [17, 11, 10, 22, 7], "type": "process", "level": 2 }, { "id": 22, "name": "dataset_22", "volumeRatio": 0.5, "impactRatio": 0.1, "qualityRatio": 0.3, "similarDatasets": [8, 30, 15, 29, 19], "type": "process", "level": 2 }, { "id": 23, "name": "dataset_23", "volumeRatio": 0.4, "impactRatio": 0.9, "qualityRatio": 0.2, "similarDatasets": [6, 2, 10, 4, 13], "type": "process", "level": 2 }, { "id": 24, "name": "dataset_24", "volumeRatio": 0.5, "impactRatio": 0.4, "qualityRatio": 0.1, "similarDatasets": [20, 4, 7, 17, 26], "type": "process", "level": 2 }, { "id": 25, "name": "dataset_25", "volumeRatio": 0.4, "impactRatio": 0.8, "qualityRatio": 0.6, "similarDatasets": [0, 21, 17, 7, 20], "type": "process", "level": 3 }, { "id": 26, "name": "dataset_26", "volumeRatio": 1, "impactRatio": 0.2, "qualityRatio": 0.3, "similarDatasets": [5, 10, 17, 15, 8], "type": "process", "level": 2 }, { "id": 27, "name": "destination_0", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "syndicate", "level": 4 }, { "id": 28, "name": "destination_1", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "syndicate", "level": 4 }, { "id": 29, "name": "destination_2", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "syndicate", "level": 4 }, { "id": 30, "name": "destination_3", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "syndicate", "level": 4 }], "links": [{ "source": 0, "target": 3 }, { "source": 1, "target": 4 }, { "source": 2, "target": 5 }, { "source": 3, "target": 6 }, { "source": 3, "target": 7 }, { "source": 3, "target": 9 }, { "source": 4, "target": 6 }, { "source": 4, "target": 7 }, { "source": 4, "target": 8 }, { "source": 4, "target": 10 }, { "source": 5, "target": 6 }, { "source": 5, "target": 9 }, { "source": 5, "target": 10 }, { "source": 5, "target": 11 }, { "source": 6, "target": 12 }, { "source": 6, "target": 14 }, { "source": 6, "target": 15 }, { "source": 7, "target": 13 }, { "source": 7, "target": 14 }, { "source": 8, "target": 13 }, { "source": 8, "target": 15 }, { "source": 9, "target": 14 }, { "source": 9, "target": 16 }, { "source": 10, "target": 15 }, { "source": 10, "target": 17 }, { "source": 11, "target": 16 }, { "source": 11, "target": 18 }, { "source": 12, "target": 19 }, { "source": 12, "target": 20 }, { "source": 12, "target": 22 }, { "source": 13, "target": 19 }, { "source": 13, "target": 20 }, { "source": 14, "target": 20 }, { "source": 14, "target": 21 }, { "source": 14, "target": 25 }, { "source": 15, "target": 21 }, { "source": 15, "target": 22 }, { "source": 15, "target": 25 }, { "source": 16, "target": 22 }, { "source": 16, "target": 24 }, { "source": 17, "target": 23 }, { "source": 17, "target": 24 }, { "source": 17, "target": 25 }, { "source": 18, "target": 21 }, { "source": 18, "target": 24 }, { "source": 19, "target": 26 }, { "source": 20, "target": 26 }, { "source": 21, "target": 24 }, { "source": 22, "target": 26 }, { "source": 23, "target": 27 }, { "source": 24, "target": 28 }, { "source": 25, "target": 29 }, { "source": 26, "target": 30 }] }
+    const nodeRadius = 20;
+    // const maxlevel = 0;
+    var selectedValue = "volumeRatio";
+    var chartDiv = document.getElementById("chart");
+    var svg = d3.select(chartDiv).append("svg");
+
+    var linkedByIndex = {};
+    var num_links = {};
+    var num_links_incoming = {};
+    graph.links.forEach(function (d) {
+      linkedByIndex[d.source + "," + d.target] = 1;
+      num_links[d.target] = (num_links[d.target] != undefined ? num_links[d.target] + 1 : 1)
+      num_links[d.source] = (num_links[d.source] != undefined ? num_links[d.source] + 1 : 1)
+      num_links_incoming[d.target] = (num_links_incoming[d.target] != undefined ? num_links_incoming[d.target] + 1 : 1)
+      d.distance = graph.nodes[d.target].level - graph.nodes[d.source].level;
+    });
+
+    const maxlevel = graph.nodes.reduce(function (currentValue, node) {
+      return Math.max(node.level, currentValue);
+    }, 0);
+    var maxlinks = Object.values(num_links).reduce(function (currentValue, entry) {
+      return Math.max(entry, currentValue);
+    }, 0);
+
+    var parentContainer = svg.append('g').attr('id', 'main-container')
+
+    var white_background = parentContainer.append("svg:defs")
+      .append("filter")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", 1)
+      .attr("height", 1)
+      .attr("id", "white_background");
+
+    white_background
+      .append("feFlood")
+      .attr("flood-color", "white");
+
+    white_background
+      .append("feComposite")
+      .attr("in", "SourceGraphic")
+
+
+    var simulation = d3.forceSimulation(graph.nodes)
+      .on('tick', tick);
+
+    // add the links
+    var path = parentContainer.selectAll("path")
+      .data(graph.links)
+      .enter().append("svg:path")
+      .attr("class", "link");
+
+    // define the nodes
+    var node = parentContainer.selectAll(".node")
+      .data(graph.nodes)
+      .enter().append("g")
+      .attr("class", 'node')
+      .on("mouseover", highlight(true))
+      .on("mouseout", highlight(false))
+      .on("mouseenter", function (d, i) {
+
+        tooltip
+          .transition()
+          .attr('d', topTooltipPath(150, 70, 15, d.x, d.y, (d[selectedValue] * nodeRadius)))
+          .style("opacity", 1)
+      })
+      .on("mouseleave", function (d) {
+        tooltip.style("opacity", 0);
+      })
+      .on("click", function (d) {
+        if (!(d.type === 'connect' || d.type === 'syndicate')) { 
+          reset();
+          highlightNodes(d);
+        }        
+      })
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+    // adding the node-circles
+    var circle = parentContainer.selectAll(".node").append("circle")
+      .attr("z", 0)
+      .attr('class', function (d) {
+        if (d.type === "connect") {
+          return 'circle-source'
+        } else if (d.type === "syndicate") {
+          return 'circle-destination'
+        } else {
+          return 'circle-node'
+        }
+      })
+      .attr("id", function (d) {
+        return "circle" + d.id
+      })
+
+    // add the text to nodes
+    var title = node.append("text")
+      .attr("x", function (d) {
+        return d[selectedValue] * nodeRadius
+      })
+      .attr("z", '20')
+      .attr("dy", '5')
+      .text(function (d) {
+        return d.name;
+      });
+
+    var dashedLine = svg.append('line')
+      // .attr('x1', '300')
+      // .attr('x2', '300')
+      .attr('y1', '30')
+      .attr('y2', chartDiv.clientHeight - 30)
+      .attr('stroke-dasharray', '5,5')
+
+    var dashedLineDest = svg.append('line')
+      // .attr('x1', '300')
+      // .attr('x2', '300')
+      .attr('y1', '30')
+      .attr('y2', chartDiv.clientHeight - 30)
+      .attr('stroke-dasharray', '5,5')
+
+    function reset() {
+      circle.attr('r', function (d) {
+        return d[selectedValue] * nodeRadius
+      })
+      circle.style('fill', function (d) {
+        if (!(d.type === 'connect' || d.type === 'syndicate')) {
+          return '#e6e4e4'
+        }
+      }).style('stroke', function (d) {
+        if (!(d.type === 'connect' || d.type === 'syndicate')) {
+          return 'none'
+        }
+      })
+    }
+
+    function highlightNodes(curntNode) {
+      var similarDataSet = curntNode.similarDatasets
+      if (similarDataSet.length > 0) {
+        similarDataSet.forEach(function (i) {
+          d3.select("#circle" + i).style("fill", function (d) {
+            if (!(d.type === 'connect' || d.type === 'syndicate')) {
+              return '#ffeb3b'
+            }
+          })
+            .style('stroke', function (d) {
+              if (!(d.type === 'connect' || d.type === 'syndicate')) {
+                return '#3949ab'
+              }
+            })
+        })
+      }
+      d3.select("#circle" + curntNode.id)
+        .attr("r", 30)
+        .style('fill', '#ffeb3b')
+        .style('stroke', '#3949ab')
+
+    }
+
+    function topTooltipPath(width, height, offset, x, y, totalRadius) {
+      const left = x - (width / 2)
+      const right = x + (width / 2)
+      const top = y - (offset + height) - totalRadius
+      const bottom = y - offset - totalRadius
+      return `M ${x},${y - totalRadius}
+      L ${x - offset},${bottom}
+      H ${left}
+      V ${top}
+      H ${right}
+      V ${bottom}
+      H ${x + offset}
+      L ${x},${y - totalRadius} z`
+    }
+
+    function dragstarted(d) {
+      if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+
+    function dragged(d) {
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
+    }
+
+    function dragended(d) {
+      if (!d3.event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+
+    function tick(e) {
+      var width = chartDiv.clientWidth,
+        height = chartDiv.clientHeight
+
+      node
+        .attr("cx", function (d) {
+          return d.x = Math.max(d.radius, Math.min(width - d.radius - 75, d.x));
+        })
+        .attr("cy", function (d) {
+          return d.y = Math.max(d.radius, Math.min(height - d.radius, d.y));
+        })
+        .attr("transform", function (d) {
+          return "translate(" + d.x + "," + d.y + ")";
+        });
+
+
+      path.attr("d", function (d) {
+        return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
+      });
+    }
+
+    function highlight(active) {
+      return function (d, i) {
+        path.classed("ingoing", function (link) {
+          return active && link.target === d;
+        });
+        path.classed("outgoing", function (link) {
+          return active && link.source === d;
+        });
+
+        node.classed("ingoing", function (node) {
+          return active && linkedByIndex[node.id + "," + d.id];
+        });
+        node.classed("outgoing", function (node) {
+          return active && linkedByIndex[d.id + "," + node.id];
+        });
+        node.classed("selected", function (node) {
+          return active && d.id === node.id;
+        });
+
+        circle.classed("ingoing", function (node) {
+          return active && linkedByIndex[node.id + "," + d.id];
+        });
+        circle.classed("outgoing", function (node) {
+          return active && linkedByIndex[d.id + "," + node.id];
+        });
+        circle.classed("selected", function (node) {
+          return active && d.id === node.id;
+        });
+
+        title.classed("ingoing-text", function (node) {
+          return active && linkedByIndex[node.id + "," + d.id];
+        });
+        title.classed("outgoing-text", function (node) {
+          return active && linkedByIndex[d.id + "," + node.id];
+        });
+        title.classed("selected-text", function (node) {
+          return active && d.id === node.id;
+        });
+      };
+    }
+
+    function redraw() {
+      var width = chartDiv.clientWidth;
+      var height = chartDiv.clientHeight;
+
+      svg.attr("width", width).attr("height", height);
+
+      const radius = 25;
+      const charge = 10;
+      const link_strength = .75;
+
+      graph.nodes.forEach(function (d) {
+        d.radius = radius * Math.atan((num_links[d.id] != undefined ? num_links[d.id] : 0) / maxlinks * 2 * Math.PI);
+      });
+      graph.nodes.forEach(function (d) {
+        d.radius_inc = radius * Math.atan((num_links_incoming[d.id] != undefined ? num_links_incoming[d.id] : 0) / maxlinks * 2 * Math.PI);
+      });
+
+      circle.attr('r', function (d) {
+        return d[selectedValue] * nodeRadius;
+        // return 20
+      });
+
+      var leveldist = width / (maxlevel + 1);
+
+      simulation
+        .force('x', d3.forceX()
+          .x(function (d) {
+            // if (d.type === "connect") {
+            //   return 0.5 * leveldist
+            // } else if (d.type === "syndicate") {
+            //   return 2.5 * leveldist
+            // } else {
+            //   return 1.5 * leveldist
+            // }
+            var dist = (d.level + 0.5) * leveldist
+            if (d.type === "connect") {
+              dashedLine.attr("x1", dist + 80).attr("x2", dist + 80)
+            }
+            if (d.type === "syndicate") {
+              dashedLineDest.attr("x1", dist - 80).attr("x2", dist - 80)
+            }
+            return dist;
+          })
+          .strength(function (d) {
+            if (d.level === 2) {
+              return 0.1
+            } else {
+              return 2
+            }
+          }))
+        .force('y', d3.forceY()
+          .y(function (d) {
+            if (d.id === 0 || d.id === 28) { return height / 3 }
+            if (d.id === 1 || d.id === 29) { return height - height / 3 }
+            if (d.id === 2 || d.id === 30) { return height - (2 * height) / 3 } else { return height / 2 }
+          })
+          .strength(function (d) {
+            if (d.level == 0 || d.level == 4) {
+              return 0.1
+            } else {
+              return 0.05
+            }
+          }));
+
+      simulation.force('link', d3.forceLink()
+        .links(graph.links)
+        .strength(function (d) {
+          // if (d.source.type === "connect" || d.target.type === "syndicate") {
+          //   return link_strength;
+          // } else {
+          return link_strength / d.target.radius_inc;
+          // }
+
+        })
+        .distance(function (d) {
+          // if (d.source.type === "connect" || d.target.type === "syndicate") {
+          //   return 1 * leveldist
+          // } else {
+          return d.distance * leveldist
+          // }
+        }))
+        .force('charge', d3.forceManyBody()
+          .strength(function (d) {
+            return -charge * d.radius;
+          }))
+        .force('collision', d3.forceCollide()
+          .radius(function (d) {
+            return d.radius;
+          }))
+        .alphaTarget(0.3)
+        .restart();
+    }
+
+    redraw();
+    d3.select(window).on("resize", redraw)
+
+    function zoom_actions() {
+      parentContainer.attr("transform", d3.event.transform)
+      tooltip.attr("transform", d3.event.transform)
+      dashedLine.attr("transform", d3.event.transform)
+      dashedLineDest.attr("transform", d3.event.transform)
+    }
+
+    var zoom_handler = d3.zoom()
+      .on("zoom", zoom_actions);
+
+    svg.call(zoom_handler)
+
+    // Placed tooltip at end so it will render above nodes(acts like z-index)
+    var tooltipContainer = d3.select('svg')
+      .append('g')
+      .attr('class', 'tooltip-container')
+      .append('defs')
+      .append('filter')
+      .attr('id', 'shadow')
+      .append('feDropShadow')
+      .attr('dx', '0')
+      .attr('dy', '2')
+      .attr('stdDeviation', '2')
+      .attr('flood-color', 'rgba(0,0,0,.24)')
+      .attr('flood-opacity', '0.5')
+
+    var tooltip = d3.select('.tooltip-container')
+      .append("path")
+      .attr('class', 'tooltip')
+      .attr('filter', 'url(#shadow)')
+      .attr('stroke', '#CCC')
+
+    d3.select('#selection-data').on('change', function (d) {
+      console.log('selected value:', document.getElementById('selection-data').value);
+      selectedValue = document.getElementById('selection-data').value;
+      redraw()
+    })
+
+  </script>
+</body>
+
+</html>
