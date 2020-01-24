@@ -128,13 +128,11 @@
       num_links[d.source] = (num_links[d.source] != undefined ? num_links[d.source] + 1 : 1)
       num_links_incoming[d.target] = (num_links_incoming[d.target] != undefined ? num_links_incoming[d.target] + 1 : 1)
       d.distance = graph.nodes[d.target].level - graph.nodes[d.source].level;
-      if (graph.nodes[d.target].level == maxlevel){
-        randomOffsetMargin.push(10);
-      } else {
+      
         var x = margin_range.shift();
         randomOffsetMargin.push(x);
         margin_range.push(x);
-      }
+      
     });
     
     var maxlinks = Object.values(num_links).reduce(function (currentValue, entry) {
