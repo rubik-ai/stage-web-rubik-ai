@@ -1,11 +1,10 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <meta charset="utf-8">
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-
 
 <style>
   body {
@@ -166,9 +165,7 @@
 
   .searchBar {
     display: inline-block;
-    margin-right: 5px;
     margin-left: 40px;
-    width: 67%;
   }
 
   .domain-card {
@@ -176,81 +173,52 @@
   }
 </style>
 
-<body>
+<body onresize="redraw(false)">
   <header>
     <div class="container-fluid">
-      <!-- <div class="row d-flex align-items-center">
-        <div class="col-sm-7"><strong>
-            <h5 class="m-0">Bird's Eye View</h5>
-          </strong>
-          <input type="text" class="form-control" id="txtName" name="txt-Name" placeholder="Search for something.."></input>
-          <button>Try it</button>
+      <div class="row align-items-center justify-content-between">
+        <div class="col-xs-6">
+          <div class="row">
+            <div class="col-auto my-auto">
+              <h5 class="m-0">Bird's Eye View</h5>
+            </div>
+            <div class="col">
+              <input type="text" class="form-control searchBar" id="txtName" name="txt-Name" oninput="mySearch()"
+                placeholder="Search Dataset..">
+            </div>
+          </div>
         </div>
 
-        <div class="col-sm-5 text-right">
+        <div class="col-lg-4 col-sm-6 my-auto">
           <div class="row">
             <div class="col">
-              <div class="card">
+              <div class="form-group row mb-0">
+                <label for="staticEmail" class="col-auto small my-auto pr-0">Radius:</label>
+                <div class="col">
+                  <select class="form-control d-inline" id="selection-data">
+                    <option value="volumeRatio" id="volume">Volume</option>
+                    <option value="qualityRatio" id="quality">Quality</option>
+                    <option value="impactRatio" id="impact">Impact</option>
+                  </select>
 
-                <span><small>Radius:</small></span>
-                <select class="form-control form-control-sm d-inline" id="selection-data">
-                  <option value="volumeRatio" id="volume">Volume</option>
-                  <option value="qualityRatio" id="quality">Quality</option>
-                  <option value="impactRatio" id='impact'>Impact</option>
-                </select>
-
+                </div>
               </div>
+
             </div>
             <div class="col">
-              <div class="domain-card">
+              <div class="form-group row mb-0">
+                <label for="staticEmail" class="col-auto small my-auto pr-0">Domain:</label>
+                <div class="col">
+                  <select class="form-control d-inline" id="filter-data">
+                    <option value="all" id="all">All Domains</option>
+                    <option value="marketing" id="marketing">Marketing</option>
+                    <option value="transaction" id="transaction">Transaction</option>
+                    <option value="customer" id="customer">Customer</option>
+                  </select>
 
-                <span><small>Select Domain:</small></span>
-                <select class="form-control form-control-sm d-inline" id="filter-data">
-                  <option value="all" id='all'>All Domains</option>
-                  <option value="Marketing" id="Marketing">Marketing</option>
-                  <option value="Transaction" id="Transaction">Transaction</option>
-                  <option value="Customer" id='Customer'>Customer</option>
-                </select>
-
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-      <div class="row d-flex align-items-center">
-        <div class="col-sm-7"><strong>
-            <h5 class="m-0">Bird's Eye View</h5>
-          </strong><input type="text" class="form-control searchBar" id="txtName" name="txt-Name" oninput="mySearch()"
-            placeholder="Search Dataset..">
-        </div>
 
-        <div class="col-sm-5 text-right">
-          <div class="card">
-
-            <span><small>Radius:</small></span>
-            <select class="form-control form-control-sm d-inline" id="selection-data">
-              <option value="volumeRatio" id="volume">Volume</option>
-              <option value="qualityRatio" id="quality">Quality</option>
-              <option value="impactRatio" id="impact">Impact</option>
-            </select>
-
-          </div>
-          <div class="domain-card">
-
-            <span><small>Domain:</small></span>
-            <select class="form-control form-control-sm d-inline" id="filter-data">
-              <option value="all" id="all">All Domains</option>
-              <option value="Marketing" id="Marketing">Marketing</option>
-              <option value="Transaction" id="Transaction">Transaction</option>
-              <option value="Customer" id="Customer">Customer</option>
-            </select>
-
-          </div>
-          <div class="row">
-            <div class="col">
-
-            </div>
-            <div class="col">
 
             </div>
           </div>
@@ -262,23 +230,25 @@
 
   <script>
 
-    graph = {"nodes":[{"id":0,"name":"source_1","volumeRatio":0.5,"impactRatio":1,"qualityRatio":1,"similarDatasets":[],"type":"connect","level":0,"domain":["Marketing","Transaction","Customer"]},{"id":1,"name":"source_2","volumeRatio":0.5,"impactRatio":1,"qualityRatio":1,"similarDatasets":[],"type":"connect","level":0,"domain":["Marketing","Transaction","Customer"]},{"id":2,"name":"source_3","volumeRatio":0.5,"impactRatio":1,"qualityRatio":1,"similarDatasets":[],"type":"connect","level":0,"domain":["Marketing","Transaction","Customer"]},{"id":3,"name":"order","volumeRatio":0.4,"impactRatio":0.4,"qualityRatio":0.6,"similarDatasets":[8,25,16,30,0],"type":"process","level":1,"domain":["Marketing","Transaction"]},{"id":4,"name":"online_order","volumeRatio":0.4,"impactRatio":0.8,"qualityRatio":0.6,"similarDatasets":[20,30,22,6,21],"type":"process","level":1,"domain":["Marketing","Customer"]},{"id":5,"name":"offline_order","volumeRatio":0.3,"impactRatio":0.8,"qualityRatio":0.5,"similarDatasets":[15,17,26,13,27],"type":"process","level":1,"domain":["Transaction","Customer"]},{"id":6,"name":"customer","volumeRatio":0.3,"impactRatio":0.4,"qualityRatio":0.4,"similarDatasets":[2,8,13,30,14],"type":"process","level":2,"domain":["Customer"]},{"id":7,"name":"sku_meta","volumeRatio":0.4,"impactRatio":0.4,"qualityRatio":0.7,"similarDatasets":[17,19,1,11,14],"type":"process","level":2,"domain":["Transaction"]},{"id":8,"name":"order_summary","volumeRatio":0.9,"impactRatio":0.2,"qualityRatio":0.5,"similarDatasets":[9,13,12,2,17],"type":"process","level":2,"domain":["Marketing","Transaction"]},{"id":9,"name":"crm_details","volumeRatio":0.7,"impactRatio":0.8,"qualityRatio":0.9,"similarDatasets":[19,26,17,29,11],"type":"process","level":2,"domain":["Marketing","Transaction","Customer"]},{"id":10,"name":"weekly_sales","volumeRatio":0.5,"impactRatio":0.9,"qualityRatio":0.4,"similarDatasets":[1,17,27,18,28],"type":"process","level":2,"domain":["Marketing","Customer"]},{"id":11,"name":"seasonality_trends","volumeRatio":0.9,"impactRatio":0.9,"qualityRatio":0.5,"similarDatasets":[9,8,10,1,26],"type":"process","level":2,"domain":["Transaction","Customer"]},{"id":12,"name":"dataset_12","volumeRatio":0.9,"impactRatio":0.4,"qualityRatio":0.5,"similarDatasets":[0,21,10,7,22],"type":"process","level":2,"domain":["Customer"]},{"id":13,"name":"dataset_13","volumeRatio":0.8,"impactRatio":0.6,"qualityRatio":0.7,"similarDatasets":[25,2,20,7,12],"type":"process","level":2,"domain":["Marketing"]},{"id":14,"name":"dataset_14","volumeRatio":0.7,"impactRatio":0.4,"qualityRatio":0.9,"similarDatasets":[3,13,15,27,22],"type":"process","level":2,"domain":["Marketing"]},{"id":15,"name":"dataset_15","volumeRatio":0.4,"impactRatio":0.9,"qualityRatio":0.5,"similarDatasets":[1,13,10,11,24],"type":"process","level":2,"domain":["Marketing","Transaction"]},{"id":16,"name":"dataset_16","volumeRatio":0.9,"impactRatio":0.9,"qualityRatio":0.7,"similarDatasets":[18,5,19,6,21],"type":"process","level":2,"domain":["Transaction","Customer"]},{"id":17,"name":"dataset_17","volumeRatio":0.6,"impactRatio":0.5,"qualityRatio":0.7,"similarDatasets":[18,0,24,10,7],"type":"process","level":2,"domain":["Marketing"]},{"id":18,"name":"dataset_18","volumeRatio":0.5,"impactRatio":0.8,"qualityRatio":0.5,"similarDatasets":[17,11,5,1,9],"type":"process","level":2,"domain":["Transaction"]},{"id":19,"name":"dataset_19","volumeRatio":0.3,"impactRatio":0.9,"qualityRatio":0.4,"similarDatasets":[0,24,4,21,22],"type":"process","level":2,"domain":["Marketing","Transaction","Customer"]},{"id":20,"name":"dataset_20","volumeRatio":0.4,"impactRatio":0.8,"qualityRatio":0.5,"similarDatasets":[15,18,17,6,4],"type":"process","level":2,"domain":["Marketing","Transaction"]},{"id":21,"name":"dataset_21","volumeRatio":1,"impactRatio":0.4,"qualityRatio":1,"similarDatasets":[17,11,10,22,7],"type":"process","level":2,"domain":["Transaction","Customer"]},{"id":22,"name":"dataset_22","volumeRatio":0.5,"impactRatio":0.9,"qualityRatio":0.4,"similarDatasets":[8,30,15,29,19],"type":"process","level":2,"domain":["Customer"]},{"id":23,"name":"dataset_23","volumeRatio":0.6,"impactRatio":0.9,"qualityRatio":0.8,"similarDatasets":[6,2,10,4,13],"type":"process","level":3,"domain":["Marketing","Transaction","Customer"]},{"id":24,"name":"dataset_24","volumeRatio":0.5,"impactRatio":0.9,"qualityRatio":0.7,"similarDatasets":[20,4,7,17,26],"type":"process","level":3,"domain":["Marketing"]},{"id":25,"name":"dataset_25","volumeRatio":0.4,"impactRatio":0.8,"qualityRatio":0.6,"similarDatasets":[0,21,17,7,20],"type":"process","level":3,"domain":["Marketing","Transaction","Customer"]},{"id":26,"name":"dataset_26","volumeRatio":1,"impactRatio":0.6,"qualityRatio":0.5,"similarDatasets":[5,10,17,15,8],"type":"process","level":3,"domain":["Marketing","Transaction","Customer"]},{"id":27,"name":"destination_0","volumeRatio":1,"impactRatio":1,"qualityRatio":1,"similarDatasets":[],"type":"syndicate","level":4,"domain":["Marketing","Transaction","Customer"]},{"id":28,"name":"destination_1","volumeRatio":1,"impactRatio":1,"qualityRatio":1,"similarDatasets":[],"type":"syndicate","level":4,"domain":["Marketing","Transaction","Customer"]},{"id":29,"name":"destination_2","volumeRatio":1,"impactRatio":1,"qualityRatio":1,"similarDatasets":[],"type":"syndicate","level":4,"domain":["Marketing","Transaction","Customer"]},{"id":30,"name":"destination_3","volumeRatio":1,"impactRatio":1,"qualityRatio":1,"similarDatasets":[],"type":"syndicate","level":4,"domain":["Marketing","Transaction","Customer"]}],"links":[{"source":0,"target":3},{"source":1,"target":4},{"source":2,"target":5},{"source":3,"target":6},{"source":3,"target":7},{"source":3,"target":9},{"source":4,"target":6},{"source":4,"target":7},{"source":4,"target":8},{"source":4,"target":10},{"source":5,"target":6},{"source":5,"target":9},{"source":5,"target":10},{"source":5,"target":11},{"source":6,"target":12},{"source":6,"target":14},{"source":6,"target":15},{"source":7,"target":13},{"source":7,"target":14},{"source":8,"target":13},{"source":8,"target":15},{"source":9,"target":14},{"source":9,"target":16},{"source":10,"target":15},{"source":10,"target":17},{"source":11,"target":16},{"source":11,"target":18},{"source":12,"target":19},{"source":12,"target":20},{"source":12,"target":22},{"source":13,"target":19},{"source":13,"target":20},{"source":14,"target":20},{"source":14,"target":21},{"source":14,"target":25},{"source":15,"target":21},{"source":15,"target":22},{"source":15,"target":25},{"source":16,"target":22},{"source":16,"target":24},{"source":17,"target":23},{"source":17,"target":24},{"source":17,"target":25},{"source":18,"target":21},{"source":18,"target":24},{"source":19,"target":26},{"source":20,"target":26},{"source":21,"target":24},{"source":22,"target":26},{"source":23,"target":27},{"source":24,"target":28},{"source":25,"target":29},{"source":26,"target":30}]}
+    graph = { "nodes": [{ "id": 0, "name": "source_1", "volumeRatio": 0.5, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "connect", "level": 0, "domain": ["marketing", "transaction", "customer"] }, { "id": 1, "name": "source_2", "volumeRatio": 0.5, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "connect", "level": 0, "domain": ["marketing", "transaction", "customer"] }, { "id": 2, "name": "source_3", "volumeRatio": 0.5, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "connect", "level": 0, "domain": ["marketing", "transaction", "customer"] }, { "id": 3, "name": "order", "volumeRatio": 0.4, "impactRatio": 0.4, "qualityRatio": 0.6, "similarDatasets": [8, 25, 16, 30, 0], "type": "process", "level": 1, "domain": ["marketing", "transaction"] }, { "id": 4, "name": "online_order", "volumeRatio": 0.4, "impactRatio": 0.8, "qualityRatio": 0.6, "similarDatasets": [20, 30, 22, 6, 21], "type": "process", "level": 1, "domain": ["marketing", "customer"] }, { "id": 5, "name": "offline_order", "volumeRatio": 0.3, "impactRatio": 0.8, "qualityRatio": 0.5, "similarDatasets": [15, 17, 26, 13, 27], "type": "process", "level": 1, "domain": ["transaction", "customer"] }, { "id": 6, "name": "customer", "volumeRatio": 0.3, "impactRatio": 0.4, "qualityRatio": 0.4, "similarDatasets": [2, 8, 13, 30, 14], "type": "process", "level": 2, "domain": ["customer"] }, { "id": 7, "name": "sku_meta", "volumeRatio": 0.4, "impactRatio": 0.4, "qualityRatio": 0.7, "similarDatasets": [17, 19, 1, 11, 14], "type": "process", "level": 2, "domain": ["transaction"] }, { "id": 8, "name": "order_summary", "volumeRatio": 0.9, "impactRatio": 0.2, "qualityRatio": 0.5, "similarDatasets": [9, 13, 12, 2, 17], "type": "process", "level": 2, "domain": ["marketing", "transaction"] }, { "id": 9, "name": "crm_details", "volumeRatio": 0.7, "impactRatio": 0.8, "qualityRatio": 0.9, "similarDatasets": [19, 26, 17, 29, 11], "type": "process", "level": 2, "domain": ["marketing", "transaction", "customer"] }, { "id": 10, "name": "weekly_sales", "volumeRatio": 0.5, "impactRatio": 0.9, "qualityRatio": 0.4, "similarDatasets": [1, 17, 27, 18, 28], "type": "process", "level": 2, "domain": ["marketing", "customer"] }, { "id": 11, "name": "seasonality_trends", "volumeRatio": 0.9, "impactRatio": 0.9, "qualityRatio": 0.5, "similarDatasets": [9, 8, 10, 1, 26], "type": "process", "level": 2, "domain": ["transaction", "customer"] }, { "id": 12, "name": "dataset_12", "volumeRatio": 0.9, "impactRatio": 0.4, "qualityRatio": 0.5, "similarDatasets": [0, 21, 10, 7, 22], "type": "process", "level": 2, "domain": ["customer"] }, { "id": 13, "name": "dataset_13", "volumeRatio": 0.8, "impactRatio": 0.6, "qualityRatio": 0.7, "similarDatasets": [25, 2, 20, 7, 12], "type": "process", "level": 2, "domain": ["marketing"] }, { "id": 14, "name": "dataset_14", "volumeRatio": 0.7, "impactRatio": 0.4, "qualityRatio": 0.9, "similarDatasets": [3, 13, 15, 27, 22], "type": "process", "level": 2, "domain": ["marketing"] }, { "id": 15, "name": "dataset_15", "volumeRatio": 0.4, "impactRatio": 0.9, "qualityRatio": 0.5, "similarDatasets": [1, 13, 10, 11, 24], "type": "process", "level": 2, "domain": ["marketing", "transaction"] }, { "id": 16, "name": "dataset_16", "volumeRatio": 0.9, "impactRatio": 0.9, "qualityRatio": 0.7, "similarDatasets": [18, 5, 19, 6, 21], "type": "process", "level": 2, "domain": ["transaction", "customer"] }, { "id": 17, "name": "dataset_17", "volumeRatio": 0.6, "impactRatio": 0.5, "qualityRatio": 0.7, "similarDatasets": [18, 0, 24, 10, 7], "type": "process", "level": 2, "domain": ["marketing"] }, { "id": 18, "name": "dataset_18", "volumeRatio": 0.5, "impactRatio": 0.8, "qualityRatio": 0.5, "similarDatasets": [17, 11, 5, 1, 9], "type": "process", "level": 2, "domain": ["transaction"] }, { "id": 19, "name": "dataset_19", "volumeRatio": 0.3, "impactRatio": 0.9, "qualityRatio": 0.4, "similarDatasets": [0, 24, 4, 21, 22], "type": "process", "level": 2, "domain": ["marketing", "transaction", "customer"] }, { "id": 20, "name": "dataset_20", "volumeRatio": 0.4, "impactRatio": 0.8, "qualityRatio": 0.5, "similarDatasets": [15, 18, 17, 6, 4], "type": "process", "level": 2, "domain": ["marketing", "transaction"] }, { "id": 21, "name": "dataset_21", "volumeRatio": 1, "impactRatio": 0.4, "qualityRatio": 1, "similarDatasets": [17, 11, 10, 22, 7], "type": "process", "level": 2, "domain": ["transaction", "customer"] }, { "id": 22, "name": "dataset_22", "volumeRatio": 0.5, "impactRatio": 0.9, "qualityRatio": 0.4, "similarDatasets": [8, 30, 15, 29, 19], "type": "process", "level": 2, "domain": ["customer"] }, { "id": 23, "name": "dataset_23", "volumeRatio": 0.6, "impactRatio": 0.9, "qualityRatio": 0.8, "similarDatasets": [6, 2, 10, 4, 13], "type": "process", "level": 3, "domain": ["marketing", "transaction", "customer"] }, { "id": 24, "name": "dataset_24", "volumeRatio": 0.5, "impactRatio": 0.9, "qualityRatio": 0.7, "similarDatasets": [20, 4, 7, 17, 26], "type": "process", "level": 3, "domain": ["marketing"] }, { "id": 25, "name": "dataset_25", "volumeRatio": 0.4, "impactRatio": 0.8, "qualityRatio": 0.6, "similarDatasets": [0, 21, 17, 7, 20], "type": "process", "level": 3, "domain": ["marketing", "transaction", "customer"] }, { "id": 26, "name": "dataset_26", "volumeRatio": 1, "impactRatio": 0.6, "qualityRatio": 0.5, "similarDatasets": [5, 10, 17, 15, 8], "type": "process", "level": 3, "domain": ["marketing", "transaction", "customer"] }, { "id": 27, "name": "destination_0", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "syndicate", "level": 4, "domain": ["marketing", "transaction", "customer"] }, { "id": 28, "name": "destination_1", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "syndicate", "level": 4, "domain": ["marketing", "transaction", "customer"] }, { "id": 29, "name": "destination_2", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "syndicate", "level": 4, "domain": ["marketing", "transaction", "customer"] }, { "id": 30, "name": "destination_3", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "syndicate", "level": 4, "domain": ["marketing", "transaction", "customer"] }], "links": [{ "source": 0, "target": 3 }, { "source": 1, "target": 4 }, { "source": 2, "target": 5 }, { "source": 3, "target": 6 }, { "source": 3, "target": 7 }, { "source": 3, "target": 9 }, { "source": 4, "target": 6 }, { "source": 4, "target": 7 }, { "source": 4, "target": 8 }, { "source": 4, "target": 10 }, { "source": 5, "target": 6 }, { "source": 5, "target": 9 }, { "source": 5, "target": 10 }, { "source": 5, "target": 11 }, { "source": 6, "target": 12 }, { "source": 6, "target": 14 }, { "source": 6, "target": 15 }, { "source": 7, "target": 13 }, { "source": 7, "target": 14 }, { "source": 8, "target": 13 }, { "source": 8, "target": 15 }, { "source": 9, "target": 14 }, { "source": 9, "target": 16 }, { "source": 10, "target": 15 }, { "source": 10, "target": 17 }, { "source": 11, "target": 16 }, { "source": 11, "target": 18 }, { "source": 12, "target": 19 }, { "source": 12, "target": 20 }, { "source": 12, "target": 22 }, { "source": 13, "target": 19 }, { "source": 13, "target": 20 }, { "source": 14, "target": 20 }, { "source": 14, "target": 21 }, { "source": 14, "target": 25 }, { "source": 15, "target": 21 }, { "source": 15, "target": 22 }, { "source": 15, "target": 25 }, { "source": 16, "target": 22 }, { "source": 16, "target": 24 }, { "source": 17, "target": 23 }, { "source": 17, "target": 24 }, { "source": 17, "target": 25 }, { "source": 18, "target": 21 }, { "source": 18, "target": 24 }, { "source": 19, "target": 26 }, { "source": 20, "target": 26 }, { "source": 21, "target": 24 }, { "source": 22, "target": 26 }, { "source": 23, "target": 27 }, { "source": 24, "target": 28 }, { "source": 25, "target": 29 }, { "source": 26, "target": 30 }] }
 
+    var chartDiv = document.getElementById("chart");
     var node, circle, title, simulation, path, tooltip, sourceNodeArr = [], targetNodeArr = [], txtName;
+
     var store = graph;
     const nodeRadius = 20;
     // const maxlevel = 4;
     var selectedValue = null;
     var selectedSize = "volumeRatio";
-    var chartDiv = document.getElementById("chart");
-    var svg = d3.select(chartDiv).append("svg");
+
+    var svg = d3.select(chartDiv).append("svg").attr("preserveAspectRatio", "xMidYMid meet");
 
     var linkedByIndex = {};
     var num_links = {};
     var num_links_incoming = {};
     var source_y = 0
     var sourceHeightArr = []
-    var height = chartDiv.clientHeight
+
     var sourceImageArr = [{ id: 0, img: "https://image.flaticon.com/icons/svg/288/288882.svg" }, { id: 1, img: "https://image.flaticon.com/icons/svg/873/873143.svg" }, { id: 2, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkilcq0ulU2YlXzvsf-EnHVenil7lgBxtyN56HPVBWcGSvLOkk&s" }, { id: 27, img: "https://image.flaticon.com/icons/svg/288/288882.svg" }, { id: 28, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkilcq0ulU2YlXzvsf-EnHVenil7lgBxtyN56HPVBWcGSvLOkk&s" }, { id: 29, img: "https://image.flaticon.com/icons/svg/873/873143.svg" }, { id: 30, img: "https://image.flaticon.com/icons/svg/288/288882.svg" }]
     var recentlyClicked;
 
@@ -300,17 +270,17 @@
 
     function calcuateSourceHeightArr() {
       var len = sourceNodeArr.length
-
+      var height = chartDiv.clientHeight
       sourceNodeArr.forEach(function (d, i) {
-        d.height = (i + 1) * height / len
+        d.height = (i + 1) * height / len - 50
       })
     }
 
     function calcuateTargetHeightArr() {
       var len = targetNodeArr.length
-
+      var height = chartDiv.clientHeight
       targetNodeArr.forEach(function (d, i) {
-        d.height = (i + 1) * height / len
+        d.height = (i + 1) * height / len - 50
       })
     }
 
@@ -459,12 +429,12 @@
 
     var dashedLine = svg.append('line')
       .attr('y1', '30')
-      .attr('y2', height - 30)
+
       .attr('stroke-dasharray', '5,5')
 
     var dashedLineDest = svg.append('line')
       .attr('y1', '30')
-      .attr('y2', height - 30)
+
       .attr('stroke-dasharray', '5,5')
 
     function reset() {
@@ -528,6 +498,7 @@
     }
 
     function dragged(d) {
+      d3.select(".tooltip").remove()
       d.fx = d3.event.x;
       d.fy = d3.event.y;
     }
@@ -539,27 +510,36 @@
     }
 
     function tick(e) {
-      var width = chartDiv.clientWidth,
-        height = chartDiv.clientHeight;
+      var width = chartDiv.clientWidth;
+      var height = chartDiv.clientHeight;
+
       node
         .attr("cx", function (d) {
           if (d.level === 2) {
-            return d.x = Math.max(d.radius, Math.min(width - d.radius - 75, d.x));
+            return d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
           } else if (d.level === 0) {
             return d.x = width / 20
           } else if (d.level === 1) {
             return d.x = width / 20 + 150
           } else if (d.level === 3) {
-            return d.x = width - 320
+            if (width < 1100) {
+              return d.x = width - 300
+            } else {
+              return d.x = width - 350
+            }
           } else if (d.level === 4) {
-            return d.x = width - 150
+            if (width < 1100) {
+              return d.x = width - 120
+            } else {
+              return d.x = width - 150
+            }
           }
         })
         .attr("cy", function (d) {
           if (d.level === 0) {
             sourceNodeArr.map(function (t, i) {
               if (t.id === d.id) {
-                return d.y = t.height - 100
+                return d.y = t.height - 50
               }
             })
           }
@@ -638,7 +618,8 @@
       };
     }
 
-    function redraw() {
+    function redraw(flag) {
+      console.log("call redraw")
       var width = chartDiv.clientWidth;
       var height = chartDiv.clientHeight;
 
@@ -655,12 +636,18 @@
         d.radius_inc = radius * Math.atan((num_links_incoming[d.id] != undefined ? num_links_incoming[d.id] : 0) / maxlinks * 2 * Math.PI);
       });
 
-      startSimulation()
-      drawPath()
-      drawNode()
-      drawImage()
-      drawCircle()
-      drawTitle()
+      if (flag) {
+        startSimulation()
+        drawPath()
+        drawNode()
+        drawImage()
+        drawCircle()
+        drawTitle()
+      } else {
+        sourceNodeArr = []
+        targetNodeArr = []
+        refineData()
+      }
 
       circle.attr('r', function (d) {
         if (!(d.level === 0 || d.level === 4)) {
@@ -674,13 +661,17 @@
         .force('x', d3.forceX()
           .x(function (d) {
             var dist = (d.level + 0.5) * leveldist
-            dashedLine.attr("x1", 0.5 * leveldist + 20).attr("x2", 0.5 * leveldist + 20)
-            dashedLineDest.attr("x1", 4.5 * leveldist - 80).attr("x2", 4.5 * leveldist - 80)
+            dashedLine.attr("x1", 0.5 * leveldist + 20).attr("x2", 0.5 * leveldist + 20).attr('y2', height - 30)
+            dashedLineDest.attr("x1", 4.5 * leveldist - 80).attr("x2", 4.5 * leveldist - 80).attr('y2', height - 30)
             return dist;
           })
           .strength(function (d) {
             if (d.level === 2) {
-              return 0.05
+              if (width < 1250) {
+                return 0.1
+              } else {
+                return 0.05
+              }
             } else {
               return 2
             }
@@ -713,8 +704,9 @@
         .restart();
     }
 
-    redraw();
-    d3.select(window).on("resize", redraw)
+    redraw(true);
+    // window.addEventListener('resize', redraw); 
+    // d3.select(window).on("resize", redraw)
 
     function zoom_actions() {
       parentContainer.attr("transform", d3.event.transform)
@@ -753,7 +745,7 @@
     d3.select('#selection-data').on('change', function (d) {
       selectedSize = document.getElementById('selection-data').value;
       removeStructure()
-      redraw()
+      redraw(true)
     })
 
     d3.select('#filter-data').on('change', function (d) {
@@ -769,15 +761,22 @@
       } else {
         graph = store
         removeStructure()
-        redraw()
+        redraw(true)
       }
 
     })
 
     function mySearch() {
       txtName = d3.select("#txtName").node().value;
-      console.log("text search", txtName)
       circle.style("fill", function (d) {
+
+        if (txtName.indexOf(":") !== -1) {
+          var domainTag = (txtName.split(':')[1]).trim()
+          let domainWord = d.domain.join(' ')
+          if (domainTag.trim() && domainWord.match(domainTag.toLowerCase())) {
+            return "#ffeb3b"
+          } else { return "#e6e4e4" }
+        }
         if (txtName) {
           return d.name.match(txtName) ? "#ffeb3b" : "#e6e4e4";
         }
@@ -812,7 +811,7 @@
       })
 
       removeStructure()
-      redraw()
+      redraw(true)
     }
 
   </script>
