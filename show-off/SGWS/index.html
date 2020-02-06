@@ -103,12 +103,27 @@
   }
 
   .connect {
-    fill:  #c5e1a5 !important
+    fill:  #c8e6c9 !important
+  }
+  .join {
+    fill: #ffe0b2 !important
+  }
+  .anomaly {
+    fill: #f8bbd0 !important
+  }
+  .mapper {
+    fill: #d7ccc8 !important
+  }
+  .filter {
+    fill: #90caf9 !important
+  }
+  .quality_check {
+    fill: #80deea !important
+  }
+  .ml_model {
+    fill: #d1c4e9 !important
   }
 
-  .join {
-    fill: #ffd08e !important
-  }
 </style>
 
 <body>
@@ -121,10 +136,10 @@
 
   <script>
     graph = {
-      "directed": true, "graph": [], "nodes": [{ "id": 0, "name": "Salesforce", "level": 0, "type": "dataset" }, { "id": 1, "name": "Sales", "level": 0, "type": "dataset" }, { "id": 2, "name": "Google Analytics", "level": 0, "type": "dataset" }, { "id": 3, "name": "Facebook", "level": 0, "type": "dataset" }, { "id": 4, "name": "Omniture", "level": 0, "type": "dataset" }, { "id": 5, "name": "Master Data", "level": 0, "type": "dataset" }, { "id": 6, "name": "Connect", "level": 1, "type": "job" }, { "id": 7, "name": "Connect", "level": 1, "type": "job" }, { "id": 8, "name": "Connect", "level": 1, "type": "job" }, { "id": 9, "name": "Connect", "level": 1, "type": "job" }, { "id": 10, "name": "Connect", "level": 1, "type": "job" }, { "id": 11, "name": "Connect", "level": 1, "type": "job" }, { "id": 12, "name": "CRM Data", "level": 2, "type": "dataset" }, { "id": 13, "name": "Sales Data", "level": 2, "type": "dataset" }, { "id": 14, "name": "GA Clickstream", "level": 2, "type": "dataset" }, { "id": 15, "name": "FB Data", "level": 2, "type": "dataset" }, { "id": 16, "name": "OMN Clickstream", "level": 2, "type": "dataset" }, { "id": 17, "name": "Master Data", "level": 2, "type": "dataset" }, { "id": 18, "name": "Join", "level": 3, "type": "job" }, { "id": 19, "name": "Join", "level": 3, "type": "job" }, { "id": 20, "name": "Master CRM Data", "level": 4, "type": "dataset" }, { "id": 21, "name": "Master Clickstream Data", "level": 4, "type": "dataset" }, { "id": 22, "name": "Join", "level": 5, "type": "job" }, { "id": 23, "name": "Join", "level": 5, "type": "job" }, { "id": 24, "name": "Master Sales", "level": 6, "type": "dataset" }, { "id": 25, "name": "Master Clickstream", "level": 6, "type": "dataset" }, { "id": 26, "name": "Join", "level": 7, "type": "job" }, { "id": 27, "name": "C360", "level": 8, "type": "dataset" }], "links": [{ "source": 0, "target": 6 }, { "source": 1, "target": 7 }, { "source": 2, "target": 8 }, { "source": 3, "target": 9 }, { "source": 4, "target": 10 }, { "source": 5, "target": 11 }, { "source": 6, "target": 12 }, { "source": 7, "target": 13 }, { "source": 8, "target": 14 }, { "source": 9, "target": 15 }, { "source": 10, "target": 16 }, { "source": 11, "target": 17 }, { "source": 12, "target": 18 }, { "source": 13, "target": 22 }, { "source": 14, "target": 19 }, { "source": 15, "target": 26 }, { "source": 16, "target": 19 }, { "source": 17, "target": 18 }, { "source": 18, "target": 20 }, { "source": 19, "target": 21 }, { "source": 20, "target": 22 }, { "source": 20, "target": 23 }, { "source": 21, "target": 23 }, { "source": 22, "target": 24 }, { "source": 23, "target": 25 }, { "source": 24, "target": 26 }, { "source": 25, "target": 26 }, { "source": 26, "target": 27 }], "multigraph": false
+      "directed": true, "graph": [], "nodes":[{"id":0,"name":"Google Analytics","level":0,"type":"dataset"},{"id":1,"name":"Omniture","level":0,"type":"dataset"},{"id":2,"name":"Master Data","level":0,"type":"dataset"},{"id":3,"name":"Sales Data","level":0,"type":"dataset"},{"id":4,"name":"Salesforce","level":0,"type":"dataset"},{"id":5,"name":"Facebook","level":0,"type":"dataset"},{"id":6,"name":"Connect","level":1,"type":"job"},{"id":7,"name":"Connect","level":1,"type":"job"},{"id":8,"name":"Connect","level":1,"type":"job"},{"id":9,"name":"Connect","level":1,"type":"job"},{"id":10,"name":"Connect","level":1,"type":"job"},{"id":11,"name":"Connect","level":1,"type":"job"},{"id":12,"name":"GA Data","level":2,"type":"dataset"},{"id":13,"name":"OM Data","level":2,"type":"dataset"},{"id":14,"name":"Master Data","level":2,"type":"dataset"},{"id":15,"name":"Sales Data","level":2,"type":"dataset"},{"id":16,"name":"SF Data","level":2,"type":"dataset"},{"id":17,"name":"FB Data","level":2,"type":"dataset"},{"id":18,"name":"Join","level":3,"type":"job"},{"id":19,"name":"Mapper","level":3,"type":"job"},{"id":20,"name":"Mapper","level":3,"type":"job"},{"id":21,"name":"Mapper","level":3,"type":"job"},{"id":22,"name":"Filter","level":3,"type":"job"},{"id":23,"name":"Clickstream","level":4,"type":"dataset"},{"id":24,"name":"Master Data","level":4,"type":"dataset"},{"id":25,"name":"Sales Data","level":4,"type":"dataset"},{"id":26,"name":"SF Data","level":4,"type":"dataset"},{"id":27,"name":"FB Data","level":4,"type":"dataset"},{"id":28,"name":"Mapper","level":5,"type":"job"},{"id":29,"name":"Filter","level":5,"type":"job"},{"id":30,"name":"Anomaly","level":5,"type":"job"},{"id":31,"name":"Mapper","level":5,"type":"job"},{"id":32,"name":"CRM","level":6,"type":"dataset"},{"id":33,"name":"Master Data","level":6,"type":"dataset"},{"id":34,"name":"Sales Data","level":6,"type":"dataset"},{"id":35,"name":"FB Data","level":6,"type":"dataset"},{"id":36,"name":"Anomaly","level":7,"type":"job"},{"id":37,"name":"Quality Check","level":7,"type":"job"},{"id":38,"name":"Filter","level":7,"type":"job"},{"id":39,"name":"Join","level":7,"type":"job"},{"id":40,"name":"CRM","level":8,"type":"dataset"},{"id":41,"name":"Master Data","level":8,"type":"dataset"},{"id":42,"name":"Sales Data","level":8,"type":"dataset"},{"id":43,"name":"FB Data","level":8,"type":"dataset"},{"id":44,"name":"Join","level":9,"type":"job"},{"id":45,"name":"Segmentation","level":9,"type":"job"},{"id":46,"name":"Quality Check","level":9,"type":"job"},{"id":47,"name":"Join","level":9,"type":"job"},{"id":48,"name":"Clickstream","level":10,"type":"dataset"},{"id":49,"name":"User Segments","level":10,"type":"dataset"},{"id":50,"name":"Sales Data","level":10,"type":"dataset"},{"id":51,"name":"Enriched SF","level":10,"type":"dataset"},{"id":52,"name":"Join","level":11,"type":"job"},{"id":53,"name":"Segmentation","level":11,"type":"job"},{"id":54,"name":"Enriched Sales","level":12,"type":"dataset"},{"id":55,"name":"SF Segements","level":12,"type":"dataset"},{"id":56,"name":"Churn Model","level":13,"type":"job"},{"id":57,"name":"Clustering","level":13,"type":"job"},{"id":58,"name":"cSpade Algo","level":13,"type":"job"},{"id":59,"name":"Join","level":13,"type":"job"},{"id":60,"name":"Join","level":13,"type":"job"},{"id":61,"name":"High Value Segment","level":14,"type":"dataset"},{"id":62,"name":"User Clusters","level":14,"type":"dataset"},{"id":63,"name":"Likely High Value","level":14,"type":"dataset"},{"id":64,"name":"SF Segments","level":14,"type":"dataset"},{"id":65,"name":"FB Segments","level":14,"type":"dataset"},{"id":66,"name":"Ensemble Model","level":15,"type":"job"},{"id":67,"name":"Churn Model","level":15,"type":"job"},{"id":68,"name":"Enriched SF Segments","level":16,"type":"dataset"},{"id":69,"name":"Enriched FB Segments","level":16,"type":"dataset"},{"id":70,"name":"Join","level":17,"type":"job"},{"id":71,"name":"Join","level":17,"type":"job"},{"id":72,"name":"C360","level":18,"type":"dataset"}],"links":[{"source":0,"target":6},{"source":1,"target":7},{"source":2,"target":8},{"source":3,"target":9},{"source":4,"target":10},{"source":5,"target":11},{"source":6,"target":12},{"source":7,"target":13},{"source":8,"target":14},{"source":9,"target":15},{"source":10,"target":16},{"source":11,"target":17},{"source":12,"target":18},{"source":13,"target":18},{"source":14,"target":19},{"source":15,"target":20},{"source":16,"target":21},{"source":17,"target":22},{"source":18,"target":23},{"source":19,"target":24},{"source":20,"target":25},{"source":21,"target":26},{"source":22,"target":27},{"source":23,"target":28},{"source":24,"target":29},{"source":25,"target":30},{"source":26,"target":47},{"source":27,"target":31},{"source":28,"target":32},{"source":29,"target":33},{"source":30,"target":34},{"source":31,"target":35},{"source":32,"target":36},{"source":33,"target":37},{"source":34,"target":38},{"source":34,"target":39},{"source":35,"target":39},{"source":36,"target":40},{"source":37,"target":41},{"source":38,"target":42},{"source":39,"target":43},{"source":40,"target":44},{"source":41,"target":44},{"source":41,"target":45},{"source":41,"target":47},{"source":42,"target":46},{"source":43,"target":60},{"source":44,"target":48},{"source":45,"target":49},{"source":46,"target":50},{"source":47,"target":51},{"source":48,"target":52},{"source":49,"target":71},{"source":50,"target":52},{"source":50,"target":59},{"source":51,"target":53},{"source":52,"target":54},{"source":53,"target":55},{"source":54,"target":56},{"source":54,"target":57},{"source":54,"target":58},{"source":55,"target":59},{"source":55,"target":60},{"source":56,"target":61},{"source":57,"target":62},{"source":58,"target":63},{"source":59,"target":64},{"source":60,"target":65},{"source":61,"target":70},{"source":62,"target":70},{"source":63,"target":71},{"source":64,"target":66},{"source":65,"target":67},{"source":66,"target":68},{"source":67,"target":69},{"source":68,"target":71},{"source":69,"target":71},{"source":70,"target":72},{"source":71,"target":72}], "multigraph": false
     }
 
-    var imgArr = [{ id: 0, imgSrc: 'logos/salesforce.png' }, { id: 1, imgSrc: 'logos/sales.png' }, { id: 2, imgSrc: 'logos/Google-Analytics-Logo-PNG.png' }, { id: 3, imgSrc: 'logos/fb.png' }, { id: 4, imgSrc: 'logos/omniture.png' }, { id: 5, imgSrc: 'logos/master data.png' }]
+    var imgArr = [{ id: 4, imgSrc: 'logos/salesforce.png' }, { id: 3, imgSrc: 'logos/sales.png' }, { id: 0, imgSrc: 'logos/Google-Analytics-Logo-PNG.png' }, { id: 5, imgSrc: 'logos/fb.png' }, { id: 1, imgSrc: 'logos/omniture.png' }, { id: 2, imgSrc: 'logos/master data.png' }]
 
     var chartDiv = document.getElementById("chart");
     var svg = d3.select(chartDiv).append("svg");
@@ -236,7 +251,7 @@
           return imgSrc
         })
     }
-
+    
     //adding rect nodes
     var cylindricalNode = mainContainer.selectAll('.rect').append('rect')
       .attr('z', 0)
@@ -245,12 +260,23 @@
       .attr('rx', 10)
       .attr('ry', 20)
       .attr('class', function (d) {
+        let jobArr = ['Segmentation', 'Churn Model', 'Clustering', 'cSpade Algo', 'Ensemble Model']
         if (d.type == "dataset") {
           return "dataset"
         } else if (d.type == "job" && d.name == "Connect") {
           return "job connect"
         } else if (d.type == "job" && d.name == "Join") {
           return "job join"
+        } else if (d.type == "job" && d.name == "Anomaly") {
+          return "job anomaly"
+        } else if (d.type == "job" && d.name == "Mapper") {
+          return "job mapper"
+        } else if (d.type == "job" && d.name == "Filter") {
+          return "job filter"
+        } else if (d.type == "job" && d.name == "Quality Check") {
+          return "job quality_check"
+        } else if (d.type == "job" && jobArr.indexOf(d.name) != -1) {
+          return "job ml_model"
         } else if (d.type == "job") {
           return "job"
         }
@@ -481,7 +507,7 @@
           .strength(2.))
         .force('y', d3.forceY()
           .y(height / 2)
-          .strength(0.025));
+          .strength(0.1));
 
       simulation.force('link', d3.forceLink()
         .links(graph.links)
