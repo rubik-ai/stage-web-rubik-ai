@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+
+
+<style>
+
+   body {
+    margin: 0px;
+  }
+
+  header {
+    height: 55px;
+    box-shadow: 0px 0px 5px #cccccc;
+    position: static;
+    z-index: 999999;
+    background: #ffffff;
+    padding: 9px;
+  }
+  .searchBar {
+    display: inline-block;
+    margin-right: 5px;
+    margin-left: 40px;
+    width: 67%;
+  }
+  #chart {
+    position: fixed;
+    left: 50px;
+    right: 0px;
+    top: 50px;
+    bottom: 0px;
+  }
+
+  path.link {
+    fill: none;
+    stroke: #c5c5c5;
+    stroke-width: 1.0px;
+  }
+
+  circle {
+    fill: #e6e4e4;
+    stroke: #fff;
+    stroke-width: 1.5px;
+  }
+
+  .circle-source {
+    fill: rgb(183, 183, 233);
+  }
+
+  .circle-destination {
+    fill: rgb(231, 179, 179);
+  }
+
+  .circle-node {
+    fill: #e6e4e4;
+  }
+
+  text {
+    fill: #000000;
+    font-size: 12px;
+    font-weight: lighter;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .ingoing {
+    stroke: #237690 !important;
+    letter-spacing: 2px;
+    font-weight: 100 !important;
+    font-size: 12px;
+  }
+
+  .ingoing-text {
+    color: #237690 !important;
+    letter-spacing: 2px;
+    font-weight: 100 !important;
+    font-size: 12px;
+    stroke-width: 1px !important;
+  }
+
+  .outgoing {
+    stroke: #FA1209 !important;
+    letter-spacing: 2px;
+    font-size: 12px;
+    font-weight: lighter;
+  }
+
+  .outgoing-text {
+    color: #FA1209 !important;
+    letter-spacing: 2px;
+    font-weight: 100 !important;
+    font-size: 12px;
+    stroke-width: 1px !important;
+  }
+
+  .selected {
+    stroke: #000000 !important;
+    letter-spacing: 2px;
+    font-weight: lighter;
+    font-size: 12px;
+  }
+
+  .selected-text {
+    color: #000000;
+    letter-spacing: 2px;
+    stroke-width: 1px !important;
+  }
+
+  .tooltip {
+    position: absolute;
+    width: 100px;
+    height: 50px;
+    fill: #FFF !important;
+    stroke: rgba(0, 0, 0, .03) !important;
+    color: #FA1209 !important;
+    opacity: 1;
+  }
+
+  .custom-container {
+    top: 50%;
+    position: absolute;
+    transform: translateY(-50%);
+  }
+
+  line {
+    stroke: #e6e4e4;
+    stroke-width: 2
+  }
+
+  .header-left {
+    float: left;
+    width: 50%;
+    height: 50px;
+  }
+
+  .header-right {
+    float: left;
+    width: 50%;
+    height: 50px;
+  }
+
+  /* .card {
+    display: unset;
+    border: none;
+  } */
+
+  .card select,
+  .domain-card select {
+    width: 130px;
+    height: 35px;
+    border-radius: 3px;
+    border: 1px solid #cccccc;
+  }
+
+  .card strong,
+  .domain-card strong {
+    width: 130px;
+  }
+
+  .form-control-sm {
+    padding: 5px;
+    font-size: .75rem;
+  }
+
+  strong h5 {
+    display: inline-block;
+  }
+
+  .domain-card {
+    display: inline-block;
+  }
+
+  .highlightCircle{
+    fill:#ffeb3b!important;
+    stroke: #3949ab;
+  }
+
+  .normalClass{
+    fill:#e6e4e4!important;
+    stroke: none;
+  }
+
+  strong.eyeview-heading {
+        margin-left: 30px;
+  }
+
+  .foundClass{
+    fill: #ffeb3b
+  }
+
+  .resetClass{
+    fill: #e6e4e4
+  }
+
+</style>
+
+<body>
+
+  <header>
+    <div class="container-fluid">
+      <div class="row align-items-center justify-content-between">
+        <div class="col-xs-6">
+          <div class="row">
+            <div class="col-auto my-auto">
+              <h5 class="m-2"><strong class="eyeview-heading">Bird's Eye View</strong></h5>
+            </div>
+            <div class="col-auto my-auto">
+              <input type="text" class="form-control d-inline" id="txtName" name="txt-Name"
+                placeholder="Search Dataset.."></input>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 my-auto">
+          <div class="row">
+            <div class="col">
+              <div class="form-group row mb-0">
+                <label class="col-auto small my-auto pr-0">Radius:</label>
+                <div class="col">
+                  <select class="form-control d-inline" id="selection-data">
+                    <option value="volumeRatio" id="volume">Volume</option>
+                    <option value="qualityRatio" id="quality">Quality</option>
+                    <option value="impactRatio" id="impact">Impact</option>
+                  </select>
+
+                </div>
+              </div>
+
+            </div>
+            <div class="col">
+              <div class="form-group row mb-0">
+                <label class="col-auto small my-auto pr-0">Domain:</label>
+                <div class="col">
+                  <select class="form-control d-inline" id="filter-data">
+                    <option value="all" id="all">All Domains</option>
+                    <option value="marketing" id="marketing">Marketing</option>
+                    <option value="transaction" id="transaction">Transaction</option>
+                    <option value="customer" id="customer">Customer</option>
+                  </select>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div id="chart"></div>
+
+
+
+  <script>
+
+  let graph = { "nodes": [{ "id": 0, "name": "source_1", "volumeRatio": 0.5, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "connect", "level": 0, "domain": ["marketing", "transaction"] }, { "id": 1, "name": "source_2", "volumeRatio": 0.5, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "connect", "level": 0, "domain": ["marketing", "customer"] }, { "id": 2, "name": "source_3", "volumeRatio": 0.5, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "connect", "level": 0, "domain": ["transaction", "customer"] }, { "id": 3, "name": "order", "volumeRatio": 0.4, "impactRatio": 0.4, "qualityRatio": 0.6, "similarDatasets": [8, 25, 16, 30, 0], "type": "process", "level": 1, "domain": ["marketing", "transaction"] }, { "id": 4, "name": "online_order", "volumeRatio": 0.4, "impactRatio": 0.8, "qualityRatio": 0.6, "similarDatasets": [20, 30, 22, 6, 21], "type": "process", "level": 1, "domain": ["marketing", "customer"] }, { "id": 5, "name": "offline_order", "volumeRatio": 0.3, "impactRatio": 0.8, "qualityRatio": 0.5, "similarDatasets": [15, 17, 26, 13, 27], "type": "process", "level": 1, "domain": ["transaction", "customer"] }, { "id": 6, "name": "customer", "volumeRatio": 0.3, "impactRatio": 0.4, "qualityRatio": 0.4, "similarDatasets": [2, 8, 13, 30, 14], "type": "process", "level": 2, "domain": ["customer"] }, { "id": 7, "name": "sku_meta", "volumeRatio": 0.4, "impactRatio": 0.4, "qualityRatio": 0.7, "similarDatasets": [17, 19, 1, 11, 14], "type": "process", "level": 2, "domain": ["transaction"] }, { "id": 8, "name": "order_summary", "volumeRatio": 0.9, "impactRatio": 0.2, "qualityRatio": 0.5, "similarDatasets": [9, 13, 12, 2, 17], "type": "process", "level": 2, "domain": ["marketing", "transaction"] }, { "id": 9, "name": "crm_details", "volumeRatio": 0.7, "impactRatio": 0.8, "qualityRatio": 0.9, "similarDatasets": [19, 26, 17, 29, 11], "type": "process", "level": 2, "domain": ["marketing", "transaction", "customer"] }, { "id": 10, "name": "weekly_sales", "volumeRatio": 0.5, "impactRatio": 0.9, "qualityRatio": 0.4, "similarDatasets": [1, 17, 27, 18, 28], "type": "process", "level": 2, "domain": ["marketing", "customer"] }, { "id": 11, "name": "seasonality_trends", "volumeRatio": 0.9, "impactRatio": 0.9, "qualityRatio": 0.5, "similarDatasets": [9, 8, 10, 1, 26], "type": "process", "level": 2, "domain": ["transaction", "customer"] }, { "id": 12, "name": "dataset_12", "volumeRatio": 0.9, "impactRatio": 0.4, "qualityRatio": 0.5, "similarDatasets": [0, 21, 10, 7, 22], "type": "process", "level": 2, "domain": ["customer"] }, { "id": 13, "name": "dataset_13", "volumeRatio": 0.8, "impactRatio": 0.6, "qualityRatio": 0.7, "similarDatasets": [25, 2, 20, 7, 12], "type": "process", "level": 2, "domain": ["marketing"] }, { "id": 14, "name": "dataset_14", "volumeRatio": 0.7, "impactRatio": 0.4, "qualityRatio": 0.9, "similarDatasets": [3, 13, 15, 27, 22], "type": "process", "level": 2, "domain": ["marketing"] }, { "id": 15, "name": "dataset_15", "volumeRatio": 0.4, "impactRatio": 0.9, "qualityRatio": 0.5, "similarDatasets": [1, 13, 10, 11, 24], "type": "process", "level": 2, "domain": ["marketing", "transaction"] }, { "id": 16, "name": "dataset_16", "volumeRatio": 0.9, "impactRatio": 0.9, "qualityRatio": 0.7, "similarDatasets": [18, 5, 19, 6, 21], "type": "process", "level": 2, "domain": ["transaction", "customer"] }, { "id": 17, "name": "dataset_17", "volumeRatio": 0.6, "impactRatio": 0.5, "qualityRatio": 0.7, "similarDatasets": [18, 0, 24, 10, 7], "type": "process", "level": 2, "domain": ["marketing"] }, { "id": 18, "name": "dataset_18", "volumeRatio": 0.5, "impactRatio": 0.8, "qualityRatio": 0.5, "similarDatasets": [17, 11, 5, 1, 9], "type": "process", "level": 2, "domain": ["transaction"] }, { "id": 19, "name": "dataset_19", "volumeRatio": 0.3, "impactRatio": 0.9, "qualityRatio": 0.4, "similarDatasets": [0, 24, 4, 21, 22], "type": "process", "level": 2, "domain": ["marketing", "transaction", "customer"] }, { "id": 20, "name": "dataset_20", "volumeRatio": 0.4, "impactRatio": 0.8, "qualityRatio": 0.5, "similarDatasets": [15, 18, 17, 6, 4], "type": "process", "level": 2, "domain": ["marketing", "transaction"] }, { "id": 21, "name": "dataset_21", "volumeRatio": 1, "impactRatio": 0.4, "qualityRatio": 1, "similarDatasets": [17, 11, 10, 22, 7], "type": "process", "level": 2, "domain": ["transaction"] }, { "id": 22, "name": "dataset_22", "volumeRatio": 0.5, "impactRatio": 0.9, "qualityRatio": 0.4, "similarDatasets": [8, 30, 15, 29, 19], "type": "process", "level": 2, "domain": ["customer"] }, { "id": 23, "name": "dataset_23", "volumeRatio": 0.6, "impactRatio": 0.9, "qualityRatio": 0.8, "similarDatasets": [6, 2, 10, 4, 13], "type": "process", "level": 3, "domain": ["marketing", "transaction"] }, { "id": 24, "name": "dataset_24", "volumeRatio": 0.5, "impactRatio": 0.9, "qualityRatio": 0.7, "similarDatasets": [20, 4, 7, 17, 26], "type": "process", "level": 3, "domain": ["marketing"] }, { "id": 25, "name": "dataset_25", "volumeRatio": 0.4, "impactRatio": 0.8, "qualityRatio": 0.6, "similarDatasets": [0, 21, 17, 7, 20], "type": "process", "level": 3, "domain": ["marketing", "transaction", "customer"] }, { "id": 26, "name": "dataset_26", "volumeRatio": 1, "impactRatio": 0.6, "qualityRatio": 0.5, "similarDatasets": [5, 10, 17, 15, 8], "type": "process", "level": 3, "domain": ["marketing", "transaction", "customer"] }, { "id": 27, "name": "destination_0", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "syndicate", "level": 4, "domain": ["marketing", "transaction"] }, { "id": 28, "name": "destination_1", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "syndicate", "level": 4, "domain": ["marketing"] }, { "id": 29, "name": "destination_2", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "syndicate", "level": 4, "domain": ["marketing", "transaction", "customer"] }, { "id": 30, "name": "destination_3", "volumeRatio": 1, "impactRatio": 1, "qualityRatio": 1, "similarDatasets": [], "type": "syndicate", "level": 4, "domain": ["marketing", "transaction", "customer"] }], "links": [{ "source": 0, "target": 3 }, { "source": 1, "target": 4 }, { "source": 2, "target": 5 }, { "source": 3, "target": 6 }, { "source": 3, "target": 7 }, { "source": 3, "target": 9 }, { "source": 4, "target": 6 }, { "source": 4, "target": 7 }, { "source": 4, "target": 8 }, { "source": 4, "target": 10 }, { "source": 5, "target": 6 }, { "source": 5, "target": 9 }, { "source": 5, "target": 10 }, { "source": 5, "target": 11 }, { "source": 6, "target": 12 }, { "source": 6, "target": 14 }, { "source": 6, "target": 15 }, { "source": 7, "target": 13 }, { "source": 7, "target": 14 }, { "source": 8, "target": 13 }, { "source": 8, "target": 15 }, { "source": 9, "target": 14 }, { "source": 9, "target": 16 }, { "source": 10, "target": 15 }, { "source": 10, "target": 17 }, { "source": 11, "target": 16 }, { "source": 11, "target": 18 }, { "source": 12, "target": 19 }, { "source": 12, "target": 20 }, { "source": 12, "target": 22 }, { "source": 13, "target": 19 }, { "source": 13, "target": 20 }, { "source": 14, "target": 20 }, { "source": 14, "target": 21 }, { "source": 14, "target": 25 }, { "source": 15, "target": 21 }, { "source": 15, "target": 22 }, { "source": 15, "target": 25 }, { "source": 16, "target": 22 }, { "source": 16, "target": 24 }, { "source": 17, "target": 23 }, { "source": 17, "target": 24 }, { "source": 17, "target": 25 }, { "source": 18, "target": 21 }, { "source": 18, "target": 24 }, { "source": 19, "target": 26 }, { "source": 20, "target": 26 }, { "source": 21, "target": 24 }, { "source": 22, "target": 26 }, { "source": 23, "target": 27 }, { "source": 24, "target": 28 }, { "source": 25, "target": 29 }, { "source": 26, "target": 30 }, { "source": 18, "target": 23 }, { "source": 9, "target": 25 }, { "source": 10, "target": 25 }, { "source": 20, "target": 11 }, { "source": 19, "target": 11 }, { "source": 3, "target": 8 }, { "source": 21, "target": 23 }] }
+
+  var chartDiv = document.getElementById("chart");
+  var node, circle, title, simulation, path, tooltip, sourceNodeArr = [], targetNodeArr = [];
+  var search = document.getElementById("txtName");
+  var store = graph;
+  const nodeRadius = 20;
+  // const maxlevel = 4;
+  var selectedValue = null;
+  var selectedSize = "volumeRatio";
+
+  var svg = d3.select(chartDiv).append("svg").attr("preserveAspectRatio", "xMidYMid meet");
+
+  var linkedByIndex = {};
+  var num_links = {};
+  var num_links_incoming = {};
+  var sourceImageArr = [{ id: 0, img: "icons/salesforceEye.png" }, { id: 1, img: "icons/fbEye.png" }, { id: 2, img: "icons/hubSpotEye.png" }, { id: 27, img: "icons/snowFlake.png" }, { id: 28, img: "icons/postgre.png" }, { id: 29, img: "icons/ftp.png" }, { id: 30, img: "icons/amazon.png" }]
+  var recentlyClicked;
+
+  function refineData() {
+    graph.nodes.forEach(function (d, i) {
+      if (d.level === 0) {
+        sourceNodeArr.push({ "id": d.id });
+      }
+      if (d.level === 3) {
+        targetNodeArr.push({ "id": d.id });
+      }
+    })
+
+    calcuateSourceHeightArr()
+    calcuateTargetHeightArr()
+  }
+
+  refineData()
+
+  function calcuateSourceHeightArr() {
+    var len = sourceNodeArr.length
+    var height = chartDiv.clientHeight
+    sourceNodeArr.forEach(function (d, i) {
+      d.height = (i + 1) * height / len - 50
+    })
+  }
+
+  function calcuateTargetHeightArr() {
+    var len = targetNodeArr.length
+    var height = chartDiv.clientHeight
+    targetNodeArr.forEach(function (d, i) {
+      d.height = (i + 1) * height / len - 50
+    })
+  }
+
+  function calcuate() {
+    graph.links.forEach(function (d) {
+      linkedByIndex[d.source + "," + d.target] = 1;
+      num_links[d.target] = (num_links[d.target] !== undefined ? num_links[d.target] + 1 : 1)
+      num_links[d.source] = (num_links[d.source] !== undefined ? num_links[d.source] + 1 : 1)
+      num_links_incoming[d.target] = (num_links_incoming[d.target] !== undefined ? num_links_incoming[d.target] + 1 : 1)
+      d.distance = 1
+    });
+  }
+
+  const maxlevel = graph.nodes.reduce(function (currentValue, node) {
+    return Math.max(node.level, currentValue);
+  }, 0);
+
+  var maxlinks = Object.values(num_links).reduce(function (currentValue, entry) {
+    return Math.max(entry, currentValue);
+  }, 0);
+
+  var parentContainer = svg.append('g').attr('id', 'main-container')
+
+  var white_background = parentContainer.append("svg:defs")
+    .append("filter")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", 1)
+    .attr("height", 1)
+    .attr("id", "white_background");
+
+  white_background
+    .append("feFlood")
+    .attr("flood-color", "white");
+
+  white_background
+    .append("feComposite")
+    .attr("in", "SourceGraphic")
+
+  function startSimulation() {
+    simulation = d3.forceSimulation(graph.nodes)
+      .on('tick', tick);
+  }
+
+  // add the links
+  function drawPath() {
+    path = parentContainer.selectAll("path")
+      .data(graph.links)
+      .enter().append("svg:path")
+      .attr("class", "link");
+  }
+
+  // define the nodes
+  function drawNode() {
+    node = parentContainer.selectAll(".node")
+      .data(graph.nodes)
+      .enter().append("g")
+      .attr("class", 'node')
+      .attr("id", function (d) {
+        return "node" + d.id
+      })
+      .on("mouseover", highlight(true))
+      .on("mouseout", highlight(false))
+      .on("mouseenter", function (d) {
+        var offset;
+        if (d.level === 0 || d.level === 4) {
+          offset = d.x - 10
+        } else {
+          offset = d.x
+        }
+        // creatett()
+        // tooltip
+        //   .transition()
+        //   .attr('d', topTooltipPath(150, 70, 15, offset, d.y - 5, (d[selectedSize] * nodeRadius)))
+      })
+      .on("mouseleave", function (d) {
+        // d3.select(".tooltip").remove()
+      })
+      .on("click", function (d) {
+        if (!(d.type === 'connect' || d.type === 'syndicate')) {
+          if (recentlyClicked !== d.id) {
+            recentlyClicked = d.id
+            reset();
+            highlightNodes(d);
+          } else {
+            reset();
+            recentlyClicked = null
+          }
+        }
+      })
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+  }
+  // adding the node-circles
+  function drawCircle() {
+    circle = parentContainer.selectAll(".node").append("circle")
+      .attr("z", 0)
+      .attr('class', function (d) {
+        if (d.type === "connect") {
+          return 'circle-source'
+        } else if (d.type === "syndicate") {
+          return 'circle-destination'
+        } else {
+          return 'circle-node'
+        }
+      })
+      .attr("id", function (d) {
+        return "circle" + d.id
+      })
+  }
+
+  // add the text to nodes
+  function drawTitle() {
+    title = node.append("text")
+      .attr("x", function (d) {
+        return d[selectedSize] * nodeRadius
+      })
+      .attr("z", '20')
+      .attr("dy", '5')
+      .text(function (d) {
+        if (d.level === 0 || d.level === 4) {
+          return ''
+        } else {
+          return d.name;
+        }
+      });
+  }
+
+  function drawImage() {
+    node.append("image")
+      .attr("x", function (d) {
+        return -30
+      }).attr("y", function (d) {
+        return -30
+      }).attr("width", 100).attr("height", 60)
+      .attr("xlink:href", function (d) {
+        if (d.level === 0 || d.level === 4) {
+          var imgSrc;
+          sourceImageArr.map(function (i) {
+            if (d.id === i.id) {
+              imgSrc = i.img
+            }
+          })
+        }
+        return imgSrc
+      })
+  }
+
+  var dashedLine = svg.append('line')
+    .attr('y1', '50')
+
+    .attr('stroke-dasharray', '5,5')
+
+  var dashedLineDest = svg.append('line')
+    .attr('y1', '50')
+
+    .attr('stroke-dasharray', '5,5')
+
+  function reset() {
+    circle.attr('r', function (d) {
+      if (!(d.level === 0 || d.level === 4)) {
+        return d[selectedSize] * nodeRadius
+      }
+    })
+    circle.attr('class', function (d) {
+      if (!(d.type === 'connect' || d.type === 'syndicate')) {
+        return 'normalClass'
+      }
+    })
+  }
+
+  function highlightNodes(curntNode) {
+    var similarDataSet = curntNode.similarDatasets
+    if (similarDataSet.length > 0) {
+      similarDataSet.forEach(function (i) {
+        d3.select("#circle" + i).attr("class", function (d) {
+          if (!(d.type === 'connect' || d.type === 'syndicate')) {
+            return 'highlightCircle'
+          }
+        })
+      })
+    }
+    d3.select("#circle" + curntNode.id)
+      .attr("r", 30)
+      .attr("class", "highlightCircle")
+  }
+
+  function topTooltipPath(width, height, offset, x, y, totalRadius) {
+    const left = x - (width / 2)
+    const right = x + (width / 2)
+    const top = y - (offset + height) - totalRadius
+    const bottom = y - offset - totalRadius
+    return `M ${x},${y - totalRadius}
+      L ${x - offset},${bottom}
+      H ${left}
+      V ${top}
+      H ${right}
+      V ${bottom}
+      H ${x + offset}
+      L ${x},${y - totalRadius} z`
+  }
+
+  function dragstarted(d) {
+    if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+
+  function dragged(d) {
+    // d3.select(".tooltip").remove()
+    d.fx = d3.event.x;
+    d.fy = d3.event.y;
+  }
+
+  function dragended(d) {
+    if (!d3.event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+
+  function tick(e) {
+    var width = chartDiv.clientWidth;
+    var height = chartDiv.clientHeight;
+
+    node
+      .attr("cx", function (d) {
+        if (d.level === 2) {
+          return d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
+        } else if (d.level === 0) {
+          return d.x = width / 20
+        } else if (d.level === 1) {
+          return d.x = width / 20 + 150
+        } else if (d.level === 3) {
+          if (width < 1100) {
+            return d.x = width - 300
+          } else {
+            return d.x = width - 350
+          }
+        } else if (d.level === 4) {
+          if (width < 1100) {
+            return d.x = width - 120
+          } else {
+            return d.x = width - 150
+          }
+        }
+      })
+      .attr("cy", function (d) {
+        if (d.level === 0) {
+          sourceNodeArr.map(function (t, i) {
+            if (t.id === d.id) {
+              return d.y = t.height - 50
+            }
+          })
+        }
+        else if (d.level === 1) {
+          graph.links.forEach(function (l) {
+            if (l.target.id === d.id) {
+              return d.y = l.source.y
+            }
+          })
+        }
+        else if (d.level === 3) {
+          targetNodeArr.map(function (t, i) {
+            if (t.id === d.id) {
+              return d.y = t.height - 50
+            }
+          })
+        }
+        if (d.level === 4) {
+          graph.links.forEach(function (l) {
+            if (l.target.id === d.id) {
+              return d.y = l.source.y
+            }
+          })
+        } else {
+          return d.y = Math.max(d.radius, Math.min(height - d.radius, d.y));
+        }
+      })
+      .attr("transform", function (d) {
+        return "translate(" + d.x + "," + d.y + ")";
+      });
+
+
+    path.attr("d", function (d) {
+      return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
+    });
+  }
+
+  function highlight(active) {
+    return function (d, i) {
+      path.classed("ingoing", function (link) {
+        return active && link.target === d;
+      });
+      path.classed("outgoing", function (link) {
+        return active && link.source === d;
+      });
+
+      node.classed("ingoing", function (node) {
+        return active && linkedByIndex[node.id + "," + d.id];
+      });
+      node.classed("outgoing", function (node) {
+        return active && linkedByIndex[d.id + "," + node.id];
+      });
+      node.classed("selected", function (node) {
+        return active && d.id === node.id;
+      });
+
+      circle.classed("ingoing", function (node) {
+        return active && linkedByIndex[node.id + "," + d.id];
+      });
+      circle.classed("outgoing", function (node) {
+        return active && linkedByIndex[d.id + "," + node.id];
+      });
+      circle.classed("selected", function (node) {
+        return active && d.id === node.id;
+      });
+
+      title.classed("ingoing-text", function (node) {
+        return active && linkedByIndex[node.id + "," + d.id];
+      });
+      title.classed("outgoing-text", function (node) {
+        return active && linkedByIndex[d.id + "," + node.id];
+      });
+      title.classed("selected-text", function (node) {
+        return active && d.id === node.id;
+      });
+    };
+  }
+
+  function redraw(flag) {
+    var width = chartDiv.clientWidth;
+    var height = chartDiv.clientHeight;
+
+    svg.attr("width", width).attr("height", height);
+    calcuate()
+    const radius = 25;
+    const charge = 10;
+    const link_strength = .75;
+
+    graph.nodes.forEach(function (d) {
+      d.radius = radius * Math.atan((num_links[d.id] !== undefined ? num_links[d.id] : 0) / maxlinks * 2 * Math.PI);
+    });
+    graph.nodes.forEach(function (d) {
+      d.radius_inc = radius * Math.atan((num_links_incoming[d.id] !== undefined ? num_links_incoming[d.id] : 0) / maxlinks * 2 * Math.PI);
+    });
+
+    if (flag) {
+      startSimulation()
+      drawPath()
+      drawNode()
+      drawImage()
+      drawCircle()
+      drawTitle()
+    } else {
+      sourceNodeArr = []
+      targetNodeArr = []
+      refineData()
+    }
+
+    circle.attr('r', function (d) {
+      if (!(d.level === 0 || d.level === 4)) {
+        return d[selectedSize] * nodeRadius;
+      }
+    });
+
+    var leveldist = width / (maxlevel + 1);
+
+    simulation
+      .force('x', d3.forceX()
+        .x(function (d) {
+          var dist = (d.level + 0.5) * leveldist
+          dashedLine.attr("x1", 0.5 * leveldist + 20).attr("x2", 0.5 * leveldist + 20).attr('y2', height - 30)
+          dashedLineDest.attr("x1", 4.5 * leveldist - 80).attr("x2", 4.5 * leveldist - 80).attr('y2', height - 50)
+          return dist;
+        })
+        .strength(function (d) {
+          if (d.level === 2) {
+            if (width < 1250) {
+              return 0.1
+            } else {
+              return 0.05
+            }
+          } else {
+            return 2
+          }
+        }))
+      .force('y', d3.forceY()
+        .y(function (d) {
+          return height / 2
+        })
+        .strength(function (d) {
+          return 0.1
+        }));
+
+    simulation.force('link', d3.forceLink()
+      .links(graph.links)
+      .strength(function (d) {
+        return link_strength / d.target.radius_inc;
+      })
+      .distance(function (d) {
+        return d.distance * leveldist
+      }))
+      .force('charge', d3.forceManyBody()
+        .strength(function (d) {
+          return -charge * d.radius;
+        }))
+      .force('collision', d3.forceCollide()
+        .radius(function (d) {
+          return d.radius;
+        }))
+      .alphaTarget(0.3)
+      .restart();
+  }
+
+  redraw(true);
+  // window.addEventListener('resize', redraw);
+  d3.select(window).on("resize", redraw)
+
+  function zoom_actions() {
+    parentContainer.attr("transform", d3.event.transform)
+    // d3.select('.tooltip-container').attr("transform", d3.event.transform)
+    dashedLine.attr("transform", d3.event.transform)
+    dashedLineDest.attr("transform", d3.event.transform)
+  }
+
+  var zoom_handler = d3.zoom()
+    .on("zoom", zoom_actions);
+
+  svg.call(zoom_handler)
+
+  // Placed tooltip at end so it will render above nodes(acts like z-index)
+  d3.select('svg')
+    .append('g')
+    .attr('class', 'tooltip-container')
+    .append('defs')
+    .append('filter')
+    .attr('id', 'shadow')
+    .append('feDropShadow')
+    .attr('dx', '0')
+    .attr('dy', '2')
+    .attr('stdDeviation', '2')
+    .attr('flood-color', 'rgba(0,0,0,.24)')
+    .attr('flood-opacity', '0.5')
+
+  function creatett() {
+    tooltip = d3.select('.tooltip-container')
+      .append("path")
+      .attr('class', 'tooltip')
+      .attr('filter', 'url(#shadow)')
+      .attr('stroke', '#CCC')
+  }
+
+  d3.select('#selection-data').on('change', function (d) {
+    selectedSize = document.getElementById('selection-data').value;
+    removeStructure()
+    redraw(true)
+  })
+
+  d3.select('#filter-data').on('change', function (d) {
+    selectedValue = document.getElementById('filter-data').value;
+
+    graph = {
+      'nodes': [],
+      'links': []
+    }
+
+    if (selectedValue !== "all") {
+      filterData()
+    } else {
+      graph = store
+      removeStructure()
+      redraw(true)
+    }
+
+  })
+
+  function removeStructure() {
+    d3.selectAll(".node").remove()
+    d3.selectAll(".circle").remove()
+    d3.selectAll(".image").remove()
+    d3.selectAll(".link").remove()
+  }
+
+  function filterData() {
+    var nodeId = []
+
+    store.nodes.forEach(function (n) {
+      if (n.domain.indexOf(selectedValue) !== -1) {
+        graph.nodes.push(n)
+      }
+    })
+
+    graph.nodes.forEach(function (d) {
+      nodeId.push(d.id)
+    })
+
+    store.links.forEach(function (n) {
+      if (nodeId.indexOf(n.source.id) !== -1 && nodeId.indexOf(n.target.id) !== -1) {
+        graph.links.push(n)
+      }
+    })
+
+    removeStructure()
+    redraw(true)
+  }
+
+  search.addEventListener("input", function () {
+    let txtName = d3.select("#txtName").node().value;
+    circle.attr("class", function (d) {
+
+      if (txtName.indexOf(":") !== -1) {
+        var domainTag = (txtName.split(':')[1]).trim()
+        let domainWord = d.domain.join(' ')
+        if (domainTag.trim() && domainWord.match(domainTag.toLowerCase())) {
+          return "foundClass"
+        } else {
+          return "resetClass"
+        }
+      }
+      if (txtName) {
+        return d.name.match(txtName) ? "foundClass" : "resetClass";
+      }
+    })
+  });
+
+  </script>
+</body>
+
+</html>
