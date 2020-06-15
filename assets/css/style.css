@@ -587,6 +587,11 @@ p {
     min-height: 60vh;
 }
 
+.services-header {
+    background-color: #ececec;
+}
+
+
 .marvin-header {
     background: #0070c9 url(./../images/rubik-product.png) no-repeat right center;
     background-size: contain;
@@ -1026,4 +1031,22 @@ p {
         margin: 5px 0!important;
     }
 
+}
+
+
+.btn-primary {
+  background-color: #000;
+  border-radius: 0;
+  border-color: #000;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary.focus,
+.btn-primary:active,
+.btn-primary.active,
+.btn-primary:not(:disabled):not(.disabled):active {
+  background: #fff;
+  color: #000;
+  border-color: #000;
 }
