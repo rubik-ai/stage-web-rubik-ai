@@ -1,0 +1,131 @@
+﻿{
+  "name": "MyClass",
+  "type": "record",
+  "namespace": "com.acme.avro",
+  "fields": [
+    {
+      "name": "coord",
+      "type": {
+        "name": "coord",
+        "type": "record",
+        "fields": [
+          {
+            "name": "lat",
+            "type": "float"
+          },
+          {
+            "name": "lon",
+            "type": "float"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sys",
+      "type": {
+        "name": "sys",
+        "type": "record",
+        "fields": [
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "int"
+          },
+          {
+            "name": "sunrise",
+            "type": "int"
+          },
+          {
+            "name": "id",
+            "type": "int"
+          },
+          {
+            "name": "sunset",
+            "type": "int"
+          }
+        ]
+      }
+    },
+    {
+      "name": "pressure",
+      "type": "int"
+    },
+    {
+      "name": "clouds",
+      "type": {
+        "name": "clouds",
+        "type": "record",
+        "fields": [
+          {
+            "name": "all",
+            "type": "int"
+          }
+        ]
+      }
+    },
+    {
+      "name": "visibility",
+      "type": "int"
+    },
+    {
+      "name": "cod",
+      "type": "int"
+    },
+    {
+      "name": "humidity",
+      "type": "int"
+    },
+    {
+      "name": "dt",
+      "type": "int"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "base",
+      "type": "string"
+    },
+    {
+      "name": "wind",
+      "type": {
+        "name": "wind",
+        "type": "record",
+        "fields": [
+          {
+            "name": "speed",
+            "type": "float"
+          },
+          {
+            "name": "gust",
+            "type": "float"
+          },
+          {
+            "name": "deg",
+            "type": "int"
+          }
+        ]
+      }
+    },
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "timezone",
+      "type": "int"
+    },
+    {
+      "name": "temp",
+      "type": "float"
+    },
+    {
+      "name": "description",
+      "type": "string"
+    }
+  ]
+}
